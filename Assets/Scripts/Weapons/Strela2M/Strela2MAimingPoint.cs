@@ -23,6 +23,6 @@ public class Strela2MAimingPoint : MonoBehaviour
         //_strela.parent = _weaponHolder;
         //_strela.localPosition = _objectTransformSettingsVRHolding.Position;
         //_strela.localRotation = Quaternion.Euler(_objectTransformSettingsVRHolding.Rotation);
-        //Debug.Log("Should Not Switch Point");
+        // Debug.Log("Should Not Switch Point");
     }
 }
