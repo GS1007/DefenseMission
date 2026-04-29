@@ -2,66 +2,23 @@ using UnityEngine;
 
 public class Strela2MAimController : MonoBehaviour
 {
-    [SerializeField] private Transform _headView;
-    [SerializeField] private Transform _weaponHolder;
     [SerializeField] private Transform _strela;
-    [SerializeField] private Transform _aimingPoint;
-    [SerializeField] private Transform _tempAimingPoint;
+    [SerializeField] private Transform _weaponHolder;
+    [SerializeField] private Transform _headPoint;
 
-    [SerializeField] private WeaponTransformDataSO _objectTransformSettingsVRHolding;
-    [SerializeField] private WeaponTransformDataSO _objectTransformSettingsVRAiming;
+    [SerializeField] private WeaponTransformDataSO _weaponTransformDataVRHolding;
+    [SerializeField] private WeaponTransformDataSO _weaponTransformDataVRAiming;
 
-    [Header("Aiming")]
+    [SerializeField] private float _aimDistance = 0f;
+    [SerializeField] private float _aimAngle = 0f;
 
-    [SerializeField] private LayerMask _firstAimingPoint;
-    [SerializeField] private LayerMask _secondAimingPoint;
-
-    [SerializeField] private float _aimRange = 0f;
-
-    private bool _isAiming = false;
-
-    [SerializeField] private bool _isTracking = false;
-
-    private Vector3 __aimingPointStartPosition = Vector3.zero;
-
-    private void Start()
-    {
-        __aimingPointStartPosition = _aimingPoint.localPosition;
-    }
-
-    private void Update()
-    {
-        //if (CheckForAiming() == true)
-        //{
-        //    if (_isAiming == false)
-        //    {
-        //        AttachStrelaToCamera();
-        //        _isAiming = true;
-        //    }
-        //}
-        //else
-        //{
-        //    if (_isAiming == true)
-        //    {
-        //        AttachStrelaToController();
-        //        _isAiming = false;
-        //    }
-        //}
-
-        if (_isTracking == true)
-        {
-            TrackPoition();
-
-            _isTracking = false;
-        }
-    }
-
+    [SerializeField] private Vector3 _snapPointOffset = Vector3.zero;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("AimingPoint") == true)
         {
-            AttachStrelaToCamera();
+            AttachWeaponToCamera();
         }
     }
 
@@ -69,30 +26,37 @@ public class Strela2MAimController : MonoBehaviour
     {
         if (other.CompareTag("AimingPoint") == true)
         {
-            AttachStrelaToController();
+            AttachWeaponToController();
         }
     }
 
-    private void AttachStrelaToCamera()
+    private void AttachWeaponToCamera()
     {
-        Debug.Log("Aiming");
-        _strela.parent = _headView;
-        //_strela.localPosition = _objectTransformSettingsVRAiming.Position;
-        //_strela.localRotation = Quaternion.Euler(_objectTransformSettingsVRAiming.Rotation);
+        _strela.parent = _headPoint;
+        _strela.localPosition = _weaponTransformDataVRAiming.Position;
+        _strela.localRotation = Quaternion.Euler(_weaponTransformDataVRAiming.Rotation);
     }
 
-    private void AttachStrelaToController()
+    private void AttachWeaponToController()
     {
         _strela.parent = _weaponHolder;
+        _strela.localPosition = _weaponTransformDataVRHolding.Position;
+        _strela.localRotation = Quaternion.Euler(_weaponTransformDataVRHolding.Rotation);
     }
 
-    private bool CheckForAiming()
-    {
-        return Physics.Raycast(_headView.position, _headView.forward, _aimRange, _firstAimingPoint) && Physics.Raycast(_headView.position, _headView.forward, _aimRange, _secondAimingPoint);
-    }
+    //private void CheckAngle()
+    //{
+    //    float distance = Vector3.Distance(_vrCamera.position, _firstAimPoint.position);
+    //    Vector3 dirToWeapon = (_firstAimPoint.position - _vrCamera.position).normalized;
+    //    float angle = Vector3.Angle(_vrCamera.forward, dirToWeapon);
 
-    private void TrackPoition()
-    {
-        _headView.position = new Vector3(_tempAimingPoint.position.x, _aimingPoint.position.y, _aimingPoint.position.z);
-    }
+    //    if(distance < _aimDistance && angle < _aimAngle)
+    //    {
+
+    //    }
+    //    else
+    //    {
+
+    //    }
+    //}
 }
