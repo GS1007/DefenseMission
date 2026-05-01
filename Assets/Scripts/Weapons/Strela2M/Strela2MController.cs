@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Strela2MController : MonoBehaviour
 {
+    private const float FIRE_MODE_CHECK_TIME = 0.5f;
+
     [SerializeField] private GameObject _lockLight;
 
     [SerializeField] private Transform _missileSpawnPoint;
@@ -25,7 +27,7 @@ public class Strela2MController : MonoBehaviour
 
     private void Awake()
     {
-        _fireModeCheckDelay = new WaitForSeconds(1f);
+        _fireModeCheckDelay = new WaitForSeconds(FIRE_MODE_CHECK_TIME);
     }
 
     private void OnEnable()
@@ -40,38 +42,38 @@ public class Strela2MController : MonoBehaviour
 
     private void Update()
     {
-        if (_battery.IsPoweredOn == true && _triggerPullingEnded == true && _isModeCheckOver == true)
-        {
-            if (_isAutomaticMode == true)
-            {
-                if (_seeker.IsLocked == true)
-                {
-                    _missileHitPoint = _seeker.GetHitPoint();
+        // if (_battery.IsPoweredOn == true && _triggerPullingEnded == true && _isModeCheckOver == true)
+        // {
+        //     if (_isAutomaticMode == true)
+        //     {
+        //         if (_seeker.IsLocked == true)
+        //         {
+        //             _missileHitPoint = _seeker.GetHitPoint();
 
-                    StartCoroutine(StartMissileLaunching());
+        //             StartCoroutine(StartMissileLaunching());
 
-                    _triggerPullingEnded = false;
-                }
-            }
-            else
-            {
-                if (_seeker.IsLocked == true)
-                {
-                    _missileHitPoint = _seeker.GetHitPoint();
-                    StartCoroutine(StartMissileLaunching());
-                }
-                else
-                {
-                    Strela2MMissile missile = Instantiate(_missilePrefab, _missileSpawnPoint.position, _missileSpawnPoint.rotation);
-                    missile.MissTarget();
-                    ResetWeapon();
+        //             _triggerPullingEnded = false;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if (_seeker.IsLocked == true)
+        //         {
+        //             _missileHitPoint = _seeker.GetHitPoint();
+        //             StartCoroutine(StartMissileLaunching());
+        //         }
+        //         else
+        //         {
+        //             Strela2MMissile missile = Instantiate(_missilePrefab, _missileSpawnPoint.position, _missileSpawnPoint.rotation);
+        //             missile.MissTarget();
+        //             ResetWeapon();
 
-                    Strela2MEvents.TriggerFireEvent();
-                }
+        //             Strela2MEvents.TriggerFireEvent();
+        //         }
 
-                _triggerPullingEnded = false;
-            }
-        }
+        //         _triggerPullingEnded = false;
+        //     }
+        // }
     }
 
     private void OnDisable()

@@ -1,135 +1,82 @@
 using System.Collections;
 using UnityEngine;
 
-public class Strela2MSeeker : MonoBehaviour
+public class Strela2MSeeker : MonoBehaviour, IStrela2MSeeker
 {
-    [SerializeField] private Transform _trackOrigin;
-    [SerializeField] private Transform _seekingRubberPoint;
-    [SerializeField] private LayerMask _targetLayer;
-    [SerializeField] private Strela2MBattery _battery;
+    [SerializeField] private LayerMask _aircraftLayer;
+    [SerializeField] private LayerMask _flareLayer;
+    [SerializeField] private LayerMask _occlusionLayers;
 
-    [SerializeField] private float _lockRange;
-    [SerializeField] private float _trackRadius;
-    [SerializeField] private float _angleSetupRadius;
-    [SerializeField] private float _lockTimeRequired;
+    [SerializeField] private float _seekerFOV = 0f;
+    [SerializeField] private float _lockRange = 0f;
+    [SerializeField] private float _lockThreshold = 0f;
+    [SerializeField] private float _flareHeatMultiplier = 0f;
 
     private Transform _currentTarget;
 
-    private WaitForSeconds _lockResetDelay;
+    private bool _lockConfirmed = false;
+    private float _signalStrength = 0f;
+    private float _scanInterval = 0.1f;
+    private float _scanTimer = 0f;
 
-    private Coroutine _resetLockRoutine;
-
-    private bool _trackingStarted = false;
-    private bool _isLocked = false;
-
-    private float _lockTimer = 0f;
-
-    public bool IsLocked { get { return _isLocked; } }
-
-    private void Awake()
+    public void ResetSeeker()
     {
-        _lockResetDelay = new WaitForSeconds(3f);
     }
 
-    private void OnEnable()
+    public void Track()
     {
-        Strela2MEvents.BatteryDied += ResetSeeker;
-        Strela2MEvents.Fired += ResetSeeker;
-    }
+        int combinedMask = _aircraftLayer.value | _flareLayer.value;
+        Collider[] contacts = Physics.OverlapSphere(transform.position, _lockRange, combinedMask);
 
-    private void Update()
-    {
-        if (_battery.IsPoweredOn == true)
+        Transform bestTarget = null;
+        float highestSignal = 0f;
+
+        foreach (Collider col in contacts)
         {
-            Track();
-        }
-    }
+            Vector3 dirToTarget = (col.transform.position - transform.position).normalized;
+            float angle = Vector3.Angle(transform.forward, dirToTarget);
 
-    private void OnDisable()
-    {
-        Strela2MEvents.Fired -= ResetSeeker;
-        Strela2MEvents.BatteryDied -= ResetSeeker;
-    }
+            // Must be strictly inside the FOV cone
+            if (angle > _seekerFOV / 2f) continue;
 
-    private void Track()
-    {
-        RaycastHit hit;
+            // Must have line of sight
+            if (Physics.Linecast(transform.position, col.transform.position, _occlusionLayers)) continue;
 
-        if (Physics.SphereCast(_trackOrigin.position, _trackRadius, _trackOrigin.forward, out hit, _lockRange, _targetLayer) == true)
-        {
-            if (_currentTarget == null)
+            float targetSignal = CalculateThermalSignature(col.gameObject, dirToTarget, angle);
+
+            if (targetSignal > highestSignal)
             {
-                _currentTarget = hit.transform;
-            }
-
-            if (_trackingStarted == false)
-            {
-                if (_resetLockRoutine != null)
-                {
-                    StopCoroutine(_resetLockRoutine);
-
-                    _resetLockRoutine = null;
-                }
-
-                _trackingStarted = true;
-            }
-
-            if (_isLocked == false)
-            {
-                _lockTimer += Time.deltaTime;
-
-                if (_lockTimer >= _lockTimeRequired)
-                {
-                    _lockTimer = 0f;
-                    _isLocked = true;
-
-                    Strela2MEvents.TriggerLockEvent();
-                }
+                highestSignal = targetSignal;
+                bestTarget = col.transform;
             }
         }
-        else
-        {
-            if (_trackingStarted == true)
-            {
-                if (_lockTimer > 0f)
-                {
-                    _lockTimer = 0f;
-                }
 
-                if (_isLocked == true && _resetLockRoutine == null)
-                {
-                    _resetLockRoutine = StartCoroutine(ResetLock());
-                }
-
-                _trackingStarted = false;
-            }
-        }
+        _currentTarget = bestTarget;
+        _signalStrength = highestSignal;
+        _lockConfirmed = _signalStrength > _lockThreshold;
     }
 
     public Transform GetHitPoint()
     {
-        IAircraftTarget target = _currentTarget.GetComponent<IAircraftTarget>();
-
-        return Physics.BoxCast(_seekingRubberPoint.position, new Vector3(7f, 1000f, 1000f), _seekingRubberPoint.forward, Quaternion.identity, _lockRange, _targetLayer) ? target.GetSweetSpot() : target.GetDamagePoint();
-
-        //return Physics.SphereCast(_seekingRubberPoint.position, _angleSetupRadius, _seekingRubberPoint.forward, out RaycastHit hit, _lockRange, _targetLayer) ? target.GetSweetSpot() : target.GetDamagePoint();
+        return _currentTarget;
     }
 
-    private void ResetSeeker()
+    private float CalculateThermalSignature(GameObject contact, Vector3 dirToTarget, float angle)
     {
-        _trackingStarted = false;
-        _isLocked = false;
-        _lockTimer = 0f;
-        _currentTarget = null;
-    }
+        float reticleFactor = 1f - (angle / (_seekerFOV / 2f));
+        float aspectFactor = 1f;
+        float heatMultiplier = 1f;
 
-    private IEnumerator ResetLock()
-    {
-        yield return _lockResetDelay;
+        if (((1 << contact.layer) & _aircraftLayer.value) != 0)
+        {
+            aspectFactor = Mathf.Clamp01(Vector3.Dot(contact.transform.forward, dirToTarget));
+        }
+        else if (((1 << contact.layer) & _flareLayer.value) != 0)
+        {
+            aspectFactor = 1f;
+            heatMultiplier = _flareHeatMultiplier;
+        }
 
-        _currentTarget = null;
-        _isLocked = false;
-
-        Strela2MEvents.TriggerLockResetEvent();
+        return reticleFactor * aspectFactor * heatMultiplier;
     }
 }
