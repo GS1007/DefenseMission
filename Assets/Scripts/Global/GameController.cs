@@ -1,10 +1,9 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private float _gameRestartDelay = 0f;
+    [SerializeField] private GameObject _instructorPanel;
+    [SerializeField] private GameObject _resultPanel;
 
     private void OnEnable()
     {
@@ -18,13 +17,7 @@ public class GameController : MonoBehaviour
 
     private void OnSimulationEnd()
     {
-        StartCoroutine(RestartSimulation());
-    }
-
-    private IEnumerator RestartSimulation()
-    {
-        yield return new WaitForSeconds(_gameRestartDelay);
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        _instructorPanel.SetActive(false);
+        _resultPanel.SetActive(true);
     }
 }

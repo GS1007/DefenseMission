@@ -1,54 +1,87 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Strela2MHUD : MonoBehaviour
 {
-    [SerializeField] private Image _progressImage;
-    [SerializeField] private TextMeshProUGUI _statusText;
+    [SerializeField] private Transform _strela2M;
+
+    [SerializeField] private TextMeshProUGUI _targetNameText;
+    [SerializeField] private TextMeshProUGUI _angleSetupText;
+    [SerializeField] private TextMeshProUGUI _launchModeText;
+    [SerializeField] private TextMeshProUGUI _notificationText;
+
     [SerializeField] private Strela2MLauncher _launcher;
-    [SerializeField] private Strela2MBattery _battery;
+
+    [SerializeField] private float _notificationDissapearTime = 3f;
 
     private Strela2MSeeker _seeker;
 
+    private string _currentTargetName;
+
     private void OnEnable()
     {
+        Strela2MLauncher.IllegallyFired += EnableNotificationtext;
         Strela2MLauncher.MissileLoaded += OnMissileLoad;
+        Strela2MLauncher.Fired += DisplayLaunchMode;
     }
 
     private void Update()
     {
-        if (_launcher.State != LauncherState.Ready || _launcher.LoadedMissile == null)
+        if (_seeker.HasLock == true)
         {
-            return;
-        }
+            DisplayAngleSetupValues();
 
-        DisplayBatteryHealth();
-        DisplayLockProgress();
+            if (_seeker.CurrentTarget.name.Equals(_currentTargetName) == false)
+            {
+                DisplayCurrentTargetName(_seeker.CurrentTarget.name);
+            }
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(_currentTargetName) == false)
+            {
+                _currentTargetName = string.Empty;
+            }
+        }
     }
 
     private void OnDisable()
     {
+        Strela2MLauncher.IllegallyFired -= EnableNotificationtext;
         Strela2MLauncher.MissileLoaded -= OnMissileLoad;
-    }
-
-    public void DisplayStatus(string statusMessage)
-    {
-        _statusText.text = statusMessage;
-    }
-
-    private void DisplayBatteryHealth()
-    {
-        _statusText.text = $"BATTERY: {_battery.BatteryHealth}%";
-    }
-
-    private void DisplayLockProgress()
-    {
-        _progressImage.fillAmount = _seeker.LockProgress;
+        Strela2MLauncher.Fired -= DisplayLaunchMode;
     }
 
     private void OnMissileLoad(Strela2MMissile missile)
     {
         _seeker = missile.Seeker;
+    }
+
+    private void DisplayCurrentTargetName(string name)
+    {
+        _targetNameText.text = $"სამიზნე ობიექტი: {name}";
+        _currentTargetName = name;
+    }
+
+    private void DisplayAngleSetupValues()
+    {
+        _angleSetupText.text = $"გადახრები Y:{_strela2M.eulerAngles.y}";
+    }
+
+    private void DisplayLaunchMode()
+    {
+        _launchModeText.text = $"სროლის რეჟიმი: {_launcher.MissileLaunchMode.ToString()}";
+    }
+
+    private void EnableNotificationtext()
+    {
+        _notificationText.enabled = true;
+
+        Invoke(nameof(DisableNotificationtext), _notificationDissapearTime);
+    }
+
+    private void DisableNotificationtext()
+    {
+        _notificationText.enabled = false;
     }
 }

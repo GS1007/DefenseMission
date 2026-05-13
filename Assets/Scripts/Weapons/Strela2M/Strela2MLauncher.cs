@@ -6,6 +6,7 @@ public class Strela2MLauncher : MonoBehaviour
 {
     public static event Action<Strela2MMissile> MissileLoaded;
     public static event Action Fired;
+    public static event Action IllegallyFired;
 
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
@@ -24,6 +25,8 @@ public class Strela2MLauncher : MonoBehaviour
 
     public LauncherState State { get; set; } = LauncherState.Off;
     public Strela2MMissile LoadedMissile { get; private set; }
+
+    public LaunchMode MissileLaunchMode { get { return _launchMode; } }
 
     private void OnEnable()
     {
@@ -78,6 +81,8 @@ public class Strela2MLauncher : MonoBehaviour
 
     private void OnTriggerPullingStart()
     {
+        IllegallyFired?.Invoke();
+
         if (State != LauncherState.Ready || LoadedMissile == null)
         {
             return;
