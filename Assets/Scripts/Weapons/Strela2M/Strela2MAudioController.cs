@@ -2,62 +2,107 @@ using UnityEngine;
 
 public class Strela2MAudioController : MonoBehaviour
 {
-    [SerializeField] private AudioSource _audioSource;
+    [Header("Component References")]
+    [SerializeField] private Strela2MLauncher _launcher;
 
-    [SerializeField] private AudioClip _trackingSound;
-    [SerializeField] private AudioClip _lockSound;
+    [Header("Audio Sources")]
+    [SerializeField] private AudioSource _seekerSource;
+
+    [Header("Audio Clips")]
     [SerializeField] private AudioClip _fireSound;
+    [SerializeField] private AudioClip _lockSound;
+    [SerializeField] private AudioClip _scanSound;
 
-    [SerializeField] private Strela2MBattery _battery;
+    [Header("Seeker Audio Settings")]
+    [SerializeField] private float _baseVolume = 0f;
+    [SerializeField] private float _maxVolume = 0f;
+
+    private AudioClip _currentClip;
+
+    private Strela2MSeeker _seeker;
 
     private void OnEnable()
     {
-        _battery.BatteryEnabled += PlayTrackingSound;
+        Strela2MLauncher.MissileLoaded += OnMissileLoad;
+        Strela2MLauncher.Fired += OnFire;
+        Strela2MBattery.BatteryDied += ResetAudio;
+    }
 
-        Strela2MEvents.BatteryDied += StopAudio;
-        Strela2MEvents.TrackingStopped += StopAudio;
-        Strela2MEvents.TargetLocked += PlayLockSound;
-        Strela2MEvents.LockReseted += PlayTrackingSound;
-        Strela2MEvents.Fired += PlayFireSound;
+    private void Update()
+    {
+        UpdateSeekerTone();
     }
 
     private void OnDisable()
     {
-        Strela2MEvents.TrackingStopped -= StopAudio;
-        Strela2MEvents.LockReseted -= PlayTrackingSound;
-        Strela2MEvents.TargetLocked -= PlayLockSound;
-        Strela2MEvents.Fired -= PlayFireSound;
-        Strela2MEvents.BatteryDied -= StopAudio;
-
-        _battery.BatteryEnabled -= PlayTrackingSound;
+        Strela2MLauncher.Fired -= OnFire;
+        Strela2MLauncher.MissileLoaded -= OnMissileLoad;
+        Strela2MBattery.BatteryDied -= ResetAudio;
     }
 
-    private void PlayTrackingSound()
+    private void UpdateSeekerTone()
     {
-        PlayAudio(_trackingSound, true);
+        if (_launcher.State != LauncherState.Ready || _launcher.LoadedMissile == null)
+        {
+            return;
+        }
+
+        if (!_seekerSource.isPlaying) _seekerSource.Play();
+
+        float progress = _seeker.LockProgress;
+        bool isLocked = _seeker.HasLock;
+        float signal = _seeker.SignalStrength;
+
+        if (signal > 0)
+        {
+            _seekerSource.volume = Mathf.Lerp(_baseVolume, _maxVolume, progress + 0.2f);
+
+            if (isLocked == true)
+            {
+                SetAudioClip(_lockSound);
+            }
+            else
+            {
+                SetAudioClip(_scanSound);
+            }
+        }
+        else
+        {
+            _seekerSource.volume = _baseVolume;
+        }
     }
 
-    private void PlayLockSound()
+    private void OnMissileLoad(Strela2MMissile missile)
     {
-        PlayAudio(_lockSound, false);
+        _seeker = missile.Seeker;
     }
 
-    private void PlayFireSound()
+    private void OnFire()
     {
-        PlayAudio(_fireSound, false);
+        _seekerSource.volume = _maxVolume;
+
+        SetAudioClip(_fireSound);
+
+        Debug.Log("Fired");
     }
 
-    private void PlayAudio(AudioClip clip, bool loop)
+    private void ResetAudio()
     {
-        _audioSource.clip = clip;
-        _audioSource.loop = loop;
+        _seekerSource.Stop();
 
-        _audioSource.Play();
+        _seekerSource.volume = _baseVolume;
     }
 
-    private void StopAudio()
+    private void SetAudioClip(AudioClip audioClip)
     {
-        _audioSource.Stop();
-        _audioSource.clip = null;
+        if (audioClip == _currentClip)
+        {
+            return;
+        }
+
+        _seekerSource.clip = audioClip;
+        _currentClip = audioClip;
+
+        _seekerSource.Play();
     }
 }

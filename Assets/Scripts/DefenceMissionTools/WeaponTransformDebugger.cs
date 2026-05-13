@@ -8,16 +8,6 @@ public class WeaponTransformDebugger : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _positionText;
     [SerializeField] private TextMeshProUGUI _rotationText;
 
-    private void OnEnable()
-    {
-        Strela2MEvents.Fired += DisplayWeaponTransform;
-    }
-
-    private void OnDisable()
-    {
-        Strela2MEvents.Fired -= DisplayWeaponTransform;
-    }
-
     private void DisplayWeaponTransform()
     {
         _positionText.text = $"Pos X:{_weaponTreansform.localPosition.x} Y:{_weaponTreansform.localPosition.y} Z:{_weaponTreansform.localPosition.z}";

@@ -8,11 +8,9 @@ public class Strela2MInput : MonoBehaviour, IStrela2MInput
     public static event Action TriggerPullingStarted;
     public static event Action TriggerPullingEnded;
 
-
     [SerializeField] private InputActionReference _powerToggleReference;
     [SerializeField] private InputActionReference _triggerPullingStartActionReference;
     [SerializeField] private InputActionReference _triggerPullingEndActionReference;
-
 
     private void OnEnable()
     {

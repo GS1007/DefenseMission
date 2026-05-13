@@ -4,86 +4,66 @@ using UnityEngine;
 
 public class Strela2MBattery : MonoBehaviour
 {
-    public event Action BatteryEnabled;
+    public static event Action PowerUpStarted;
+    public static event Action PoweredOn;
+    public static event Action BatteryDied;
 
-    [SerializeField] private float _batteryLifeSeconds = 0f;
-    [SerializeField] private float _startupDelay = 0f;
+    [SerializeField] private Strela2MLauncher _launcher;
 
-    private bool _isPoweredOn = false;
-    private bool _isStartingUp = false;
+    [SerializeField] private float _maxBatteryLife = 0f;
+    [SerializeField] private float _gyroSpinupTime = 0f;
 
-    private float _currentBatteryLife;
+    private float _currentBatteryTime = 0f;
 
-    public bool IsPoweredOn { get { return _isPoweredOn; } }
+    public float BatteryHealth { get { return Mathf.CeilToInt(_currentBatteryTime / _maxBatteryLife * 100f); } }
 
     private void OnEnable()
     {
-        Strela2MInput.PowerToggled += TogglePower;
-
-        Strela2MEvents.BatteryDied += ResetPower;
-        Strela2MEvents.Fired += ResetPower;
-
-    }
-
-    private void Start()
-    {
-        _currentBatteryLife = _batteryLifeSeconds;
+        Strela2MInput.PowerToggled += PowerUp;
     }
 
     private void Update()
     {
-        if (_isPoweredOn == true)
+        if (_launcher.State == LauncherState.SpinningUp || _launcher.State == LauncherState.Ready)
         {
-            HandleBatteryLife();
+            _currentBatteryTime -= Time.deltaTime;
+
+            if (_currentBatteryTime <= 0)
+            {
+                KillBattery();
+            }
         }
     }
 
     private void OnDisable()
     {
-        Strela2MEvents.Fired -= ResetPower;
-        Strela2MEvents.BatteryDied -= ResetPower;
-
-        Strela2MInput.PowerToggled -= TogglePower;
+        Strela2MInput.PowerToggled -= PowerUp;
     }
 
-    private void TogglePower()
+    private void PowerUp()
     {
-        if (_isPoweredOn || _isStartingUp || _currentBatteryLife <= 0) return;
-
-        StartCoroutine(PowerUpSequence());
-    }
-
-    private void HandleBatteryLife()
-    {
-        _currentBatteryLife -= Time.deltaTime;
-
-        Strela2MEvents.TriggerBatteryHealthUpdateEvent(Mathf.RoundToInt(_currentBatteryLife / _batteryLifeSeconds * 100));
-
-        if (_currentBatteryLife <= 0)
+        if (_launcher.State == LauncherState.Off && _launcher.LoadedMissile != null)
         {
-            Strela2MEvents.TriggerBatteryDeathEvent();
+            _currentBatteryTime = _maxBatteryLife;
 
-            Debug.Log("Battery is dead!");
+            StartCoroutine(SpinupRoutine());
         }
     }
 
-    private void ResetPower()
+    private void KillBattery()
     {
-        _isPoweredOn = false;
-        _currentBatteryLife = _batteryLifeSeconds;
+        BatteryDied?.Invoke();
+        Debug.Log("BATTERY DEAD. The weapon is disabled.");
     }
 
-    private IEnumerator PowerUpSequence()
+    private IEnumerator SpinupRoutine()
     {
-        _isStartingUp = true;
+        PowerUpStarted?.Invoke();
 
-        yield return new WaitForSeconds(_startupDelay);
+        yield return new WaitForSeconds(_gyroSpinupTime);
 
-        Debug.Log("Powered On");
+        PoweredOn?.Invoke();
 
-        _isStartingUp = false;
-        _isPoweredOn = true;
-
-        BatteryEnabled?.Invoke();
+        Debug.Log("Powered on");
     }
 }

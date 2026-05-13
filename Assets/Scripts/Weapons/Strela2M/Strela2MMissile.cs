@@ -3,134 +3,132 @@ using UnityEngine;
 
 public class Strela2MMissile : MonoBehaviour
 {
-    [Header("Missile Components")]
-    [SerializeField] private MeshRenderer _meshRenderer;
-    [SerializeField] private BoxCollider _boxCollider;
+    [Header("Components")]
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private Strela2MSeeker _seeker;
 
-    [SerializeField] private float _lifeTimeAftertargetHit = 0f;
+    [Header("Flight Dynamics")]
+    [SerializeField] private float _ejectionForce = 15f;
+    [SerializeField] private float _sustainerDelay = 0.4f;
+    [SerializeField] private float _sustainerThrust = 45f;
+    [SerializeField] private float _maxSpeed = 430f;
+    [SerializeField] private float _navigationConstant = 4.0f;
+    [SerializeField] private float _selfDestructTime = 14f;
 
-    [Header("Effects")]
-    [SerializeField] private GameObject _explosionPrefab;
-
-    [Header("Flight Settings")]
-    [SerializeField] private float _throwSpeed = 0f;
-    [SerializeField] private float _accelerationTime = 0f;
-    [SerializeField] private float _flightSpeed = 0f;
-    [SerializeField] private float _navigationConstant = 4.0f; // N-factor (3-5 is ideal)
-    [SerializeField] private float _fuseDistance = 3.0f;
-    [SerializeField] private float _lifetime = 10f;
-
-    private WaitForSeconds _accelerationDelay;
-
+    private bool _isAirborne = false;
+    private bool _motorIgnited = false;
+    private float _guidanceStartTime;
+    private Vector3 _lastTargetPos;
     private Transform _target;
-    private Vector3 _lastLineOfSight;
+    private TargetType _targetType;
 
-    private bool _isEngineActive = false;
-    private bool _isSeeking = false;
-    private bool _exploded = false;
-
-    private void Awake()
-    {
-        _accelerationDelay = new WaitForSeconds(_accelerationTime);
-    }
+    public Strela2MSeeker Seeker { get { return _seeker; } }
 
     private void FixedUpdate()
     {
-        if (_exploded == true) return;
+        Vector3 targetVelocity = Vector3.zero;
 
-        if (_isEngineActive == true)
+        if (_target != null)
         {
-            _rb.linearVelocity = transform.forward * _flightSpeed;
+            targetVelocity = (_target.position - _lastTargetPos) / Time.fixedDeltaTime;
+            _lastTargetPos = _target.position;
         }
 
-        if (!_isSeeking || _target == null) return;
+        if (!_motorIgnited) return;
 
-        Vector3 currentLineOfSight = (_target.position - transform.position).normalized;
-        Vector3 rotationAxis = Vector3.Cross(_lastLineOfSight, currentLineOfSight);
-        float relativeRotation = Mathf.Asin(rotationAxis.magnitude);
-
-        if (rotationAxis.magnitude > 0.001f)
+        if (_target != null && Time.time > _guidanceStartTime + 0.1f)
         {
-            float steerAngle = relativeRotation * _navigationConstant;
-            Quaternion steerRotation = Quaternion.AngleAxis(steerAngle * Mathf.Rad2Deg, rotationAxis.normalized);
-            _rb.MoveRotation(steerRotation * transform.rotation);
+            if (_targetType == TargetType.Sun)
+                ApplySunGuidance();
+            else
+                ApplyProportionalNavigation(targetVelocity);
+        }
+        else if (_rb.linearVelocity.sqrMagnitude > 1f)
+        {
+            transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
         }
 
-        _lastLineOfSight = currentLineOfSight;
-
-        if (Vector3.Distance(transform.position, _target.position) < _fuseDistance)
-        {
-            Explode();
-            _exploded = true;
-        }
+        ApplyThrust();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_exploded == false)
+        if (_isAirborne == true)
         {
-            if (!_isSeeking && collision.transform == _target) return;
+            Debug.Log($"Hit: {collision.gameObject.name}");
 
-            Explode();
-            _exploded = true;
+            IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+            if (damageable != null)
+                damageable.ReceiveDamage();
+
+            Destroy(gameObject);
         }
     }
 
-    public void LaunchTowardsTarget(Transform targetTransform)
+    public void Launch(Transform target)
     {
-        ThrowMissile();
-        StartCoroutine(AccelerateMissile(targetTransform, true));
+        transform.parent = null;
+        _isAirborne = true;
+        _rb.isKinematic = false;
+        _rb.useGravity = true;
+
+        _target = target;
+        _targetType = _seeker.CurrentTargetType;
+
+        if (_target != null) _lastTargetPos = _target.position;
+
+        _rb.AddForce(transform.forward * _ejectionForce, ForceMode.VelocityChange);
+        StartCoroutine(IgniteSustainer(_sustainerDelay));
     }
 
-    public void MissTarget()
+    private void ApplyProportionalNavigation(Vector3 safeTargetVelocity)
     {
-        ThrowMissile();
-        StartCoroutine(AccelerateMissile(null, false));
-    }
+        float distance = Vector3.Distance(transform.position, _target.position);
+        float currentSpeed = Mathf.Max(_rb.linearVelocity.magnitude, 10f);
+        float timeToTarget = Mathf.Min(distance / currentSpeed, 3f);
 
-    private void ThrowMissile()
-    {
-        _rb.linearVelocity = transform.forward * _throwSpeed;
-    }
+        Vector3 interceptPoint = _target.position + (safeTargetVelocity * timeToTarget);
+        Vector3 desiredDirection = (interceptPoint - transform.position).normalized;
 
-    private void Explode()
-    {
-        if (_explosionPrefab != null)
+        float turnSpeed = _navigationConstant * 10f;
+
+        _rb.linearVelocity = Vector3.RotateTowards(
+            _rb.linearVelocity,
+            desiredDirection * _rb.linearVelocity.magnitude,
+            turnSpeed * Mathf.Deg2Rad * Time.fixedDeltaTime,
+            0f
+        );
+
+        if (_rb.linearVelocity.sqrMagnitude > 0.1f)
         {
-            Instantiate(_explosionPrefab, _target.position, Quaternion.identity);
+            transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
         }
-
-        _target.parent.GetComponent<IDamageable>().ReceiveDamage();
-
-        _rb.linearVelocity = Vector3.zero;
-        _boxCollider.enabled = false;
-        _meshRenderer.enabled = false;
-
-        Destroy(gameObject, _lifeTimeAftertargetHit);
     }
 
-    private IEnumerator AccelerateMissile(Transform targetTransform, bool shouldHitTarget)
+    private void ApplySunGuidance()
     {
-        yield return _accelerationDelay;
+        Vector3 sunDir = (_target.position - transform.position).normalized;
+        Quaternion targetRot = Quaternion.LookRotation(sunDir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 5f * Time.fixedDeltaTime);
+        _rb.linearVelocity = transform.forward * _rb.linearVelocity.magnitude;
+    }
 
-        if (shouldHitTarget == true)
+    private void ApplyThrust()
+    {
+        if (_rb.linearVelocity.magnitude < _maxSpeed)
         {
-            _target = targetTransform;
-            _lastLineOfSight = (_target.position - transform.position).normalized;
-            _isSeeking = true;
+            _rb.AddForce(transform.forward * _sustainerThrust, ForceMode.Acceleration);
         }
-        else
-        {
-            _isSeeking = false;
+    }
 
-            float veerAngleX = Random.Range(-10f, 10f);
-            float veerAngleY = Random.Range(-10f, 10f);
-            transform.Rotate(veerAngleX, veerAngleY, 0f);
-        }
+    private IEnumerator IgniteSustainer(float delay)
+    {
+        yield return new WaitForSeconds(delay);
 
-        _isEngineActive = true;
+        _motorIgnited = true;
+        _rb.useGravity = false;
+        _guidanceStartTime = Time.time;
 
-        Destroy(gameObject, _lifetime);
+        Destroy(gameObject, _selfDestructTime);
     }
 }

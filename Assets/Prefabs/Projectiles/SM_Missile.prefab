@@ -1,5 +1,64 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &234598667538795026
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6107842314363745107}
+  - component: {fileID: 4909095420357039862}
+  m_Layer: 0
+  m_Name: IRSeeker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6107842314363745107
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234598667538795026}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.698}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3362406155338247969}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4909095420357039862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234598667538795026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7290b69b171b23e46a696336e1b90c6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
+  _lockRange: 4200
+  _seekerFOV: 1.8
+  _aircraftLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _flareLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  _occlusionLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  _lockDuration: 3
+  _maxTurnRate: 1.5
+  _flareHeatMultiplier: 3
+  _gimbalLimit: 20
 --- !u!1 &6313387835446921533
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,10 +89,11 @@ Transform:
   m_GameObject: {fileID: 6313387835446921533}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.509}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6107842314363745107}
   - {fileID: 6054681238588291270}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -141,7 +201,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &5440741239595406257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,17 +214,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8db798fcf9498f4684928815dec0809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MMissile
-  _meshRenderer: {fileID: 7730572820492879274}
-  _boxCollider: {fileID: 6348969597346881171}
   _rb: {fileID: 5504095074594868413}
-  _lifeTimeAftertargetHit: 5.5
-  _explosionPrefab: {fileID: 862673876726042777, guid: 27845853c8d9325469ef9659fee26205, type: 3}
-  _throwSpeed: 105
-  _accelerationTime: 0.5
-  _flightSpeed: 350
+  _seeker: {fileID: 4909095420357039862}
+  _ejectionForce: 25
+  _sustainerDelay: 0.4
+  _sustainerThrust: 60
+  _maxSpeed: 430
   _navigationConstant: 4
-  _fuseDistance: 3
-  _lifetime: 15
+  _selfDestructTime: 14
 --- !u!1001 &6310890158353142841
 PrefabInstance:
   m_ObjectHideFlags: 0
