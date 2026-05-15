@@ -7,6 +7,8 @@ public class Strela2MLauncher : MonoBehaviour
     public static event Action<Strela2MMissile> MissileLoaded;
     public static event Action Fired;
     public static event Action IllegallyFired;
+    public static event Action<LaunchMode> LaunchModeSet;
+    public static event Action<bool> MissileLaunched;
 
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
@@ -26,14 +28,13 @@ public class Strela2MLauncher : MonoBehaviour
     public LauncherState State { get; set; } = LauncherState.Off;
     public Strela2MMissile LoadedMissile { get; private set; }
 
-    public LaunchMode MissileLaunchMode { get { return _launchMode; } }
-
     private void OnEnable()
     {
         Strela2MBattery.PowerUpStarted += OnBatteryPowerupStart;
         Strela2MBattery.PoweredOn += OnBatteryPowerOn;
         Strela2MInput.TriggerPullingStarted += OnTriggerPullingStart;
         Strela2MInput.TriggerPullingEnded += OnTroggerPullingEnd;
+        Strela2MBattery.BatteryDied += OnBatteryDeath;
     }
 
     private void Start()
@@ -58,6 +59,7 @@ public class Strela2MLauncher : MonoBehaviour
         Strela2MInput.TriggerPullingStarted -= OnTriggerPullingStart;
         Strela2MBattery.PoweredOn -= OnBatteryPowerOn;
         Strela2MBattery.PowerUpStarted -= OnBatteryPowerupStart;
+        Strela2MBattery.BatteryDied -= OnBatteryDeath;
     }
 
     private void LoadMissile()
@@ -118,7 +120,11 @@ public class Strela2MLauncher : MonoBehaviour
         {
             if (seeker.CurrentTarget.TryGetComponent(out IAircraftTarget aircraftTarget) == true)
             {
-                finalTarget = CheckAngle() ? aircraftTarget.GetSweetSpot() : aircraftTarget.GetDamagePoint();
+                bool hit = CheckAngle();
+
+                finalTarget = hit ? aircraftTarget.GetSweetSpot() : aircraftTarget.GetDamagePoint();
+
+                MissileLaunched?.Invoke(hit);
             }
             else
             {
@@ -128,7 +134,7 @@ public class Strela2MLauncher : MonoBehaviour
 
         LoadedMissile.Launch(finalTarget);
         LoadedMissile = null;
-        State = LauncherState.Empty;
+        State = LauncherState.Off;
         _triggerIsHeld = false;
 
         Fired?.Invoke();
@@ -136,7 +142,7 @@ public class Strela2MLauncher : MonoBehaviour
 
     private bool CheckAngle()
     {
-        return Physics.Raycast(_angleSetupPoint.position, _angleSetupPoint.forward, 4000f, _aircraftLayer);
+        return Physics.SphereCast(_angleSetupPoint.position, 4f, _angleSetupPoint.forward, out RaycastHit hit, 4000f, _aircraftLayer);
     }
 
     private IEnumerator SetLaunchMode()
@@ -144,5 +150,13 @@ public class Strela2MLauncher : MonoBehaviour
         yield return _launchModeSetupDelay;
 
         _launchMode = _triggerIsHeld ? LaunchMode.Automatic : LaunchMode.Manual;
+
+        LaunchModeSet?.Invoke(_launchMode);
+    }
+
+    private void OnBatteryDeath()
+    {
+        State = LauncherState.Off;
+        _triggerIsHeld = false;
     }
 }

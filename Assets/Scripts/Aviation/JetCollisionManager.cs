@@ -9,6 +9,7 @@ public class JetCollisionManager : MonoBehaviour, IDamageable, IAircraftTarget
     [SerializeField] private Transform _sweetSpot;
     [SerializeField] private Transform _damagePoint;
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private AircraftType _aircraftTyoe;
 
     [SerializeField] private CrashBehaviorSO _crashBehavior;
     [SerializeField] private SplineAnimate _splineAnimate;
@@ -76,5 +77,10 @@ public class JetCollisionManager : MonoBehaviour, IDamageable, IAircraftTarget
         _rb.linearVelocity = _rb.linearVelocity * 0.2f;
 
         Destroy(gameObject, 10f);
+    }
+
+    public AircraftType GetAircraftType()
+    {
+        return _aircraftTyoe;
     }
 }

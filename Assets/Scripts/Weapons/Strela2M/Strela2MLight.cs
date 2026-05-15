@@ -11,6 +11,8 @@ public class Strela2MLight : MonoBehaviour
     private void OnEnable()
     {
         Strela2MLauncher.MissileLoaded += OnMissileLoad;
+        Strela2MBattery.BatteryDied += DisableLight;
+        Strela2MLauncher.Fired += DisableLight;
     }
 
     private void Update()
@@ -26,6 +28,8 @@ public class Strela2MLight : MonoBehaviour
     private void OnDisable()
     {
         Strela2MLauncher.MissileLoaded -= OnMissileLoad;
+        Strela2MBattery.BatteryDied -= DisableLight;
+        Strela2MLauncher.Fired -= DisableLight;
     }
 
     private void UpdateLight()
@@ -47,5 +51,10 @@ public class Strela2MLight : MonoBehaviour
     private void OnMissileLoad(Strela2MMissile missile)
     {
         _seeker = missile.Seeker;
+    }
+
+    private void DisableLight()
+    {
+        _light.enabled = false;
     }
 }

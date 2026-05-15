@@ -9,6 +9,7 @@ public class HelicopterCollisionManager : MonoBehaviour, IDamageable, IAircraftT
     [SerializeField] private Transform _damagePoint;
 
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private AircraftType _aircraftTyoe;
 
     [Header("Events")]
 
@@ -85,5 +86,10 @@ public class HelicopterCollisionManager : MonoBehaviour, IDamageable, IAircraftT
     {
         _currentRotation = transform.rotation;
         _targetRotation = Quaternion.Euler(0f, Random.Range(60, 120f), Random.Range(-35f, 35f));
+    }
+
+    public AircraftType GetAircraftType()
+    {
+        return _aircraftTyoe;
     }
 }

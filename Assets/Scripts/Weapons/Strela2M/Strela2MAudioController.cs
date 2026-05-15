@@ -11,7 +11,8 @@ public class Strela2MAudioController : MonoBehaviour
     [Header("Audio Clips")]
     [SerializeField] private AudioClip _fireSound;
     [SerializeField] private AudioClip _lockSound;
-    [SerializeField] private AudioClip _scanSound;
+    [SerializeField] private AudioClip _defaultSound;
+    [SerializeField] private AudioClip _targetDetectSound;
 
     [Header("Seeker Audio Settings")]
     [SerializeField] private float _baseVolume = 0f;
@@ -63,12 +64,13 @@ public class Strela2MAudioController : MonoBehaviour
             }
             else
             {
-                SetAudioClip(_scanSound);
+                SetAudioClip(_targetDetectSound);
             }
         }
         else
         {
             _seekerSource.volume = _baseVolume;
+            SetAudioClip(_defaultSound);
         }
     }
 

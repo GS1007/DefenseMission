@@ -15,6 +15,11 @@ public class GameController : MonoBehaviour
         AviationManager.SimulationEnded -= OnSimulationEnd;
     }
 
+    public void RelaodGame()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+
     private void OnSimulationEnd()
     {
         _instructorPanel.SetActive(false);

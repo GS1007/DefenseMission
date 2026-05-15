@@ -16,13 +16,16 @@ public class Strela2MHUD : MonoBehaviour
 
     private Strela2MSeeker _seeker;
 
-    private string _currentTargetName;
+    public string CurrentTargetName { get; private set; }
+    public string MissileLaunchMode { get; private set; }
+    public Vector3 AngleSettings { get { return _strela2M.eulerAngles; } }
+    public AircraftType TypeOfAircraft { get { return _seeker.CurrentTarget.GetComponent<IAircraftTarget>().GetAircraftType(); } }
 
     private void OnEnable()
     {
         Strela2MLauncher.IllegallyFired += EnableNotificationtext;
         Strela2MLauncher.MissileLoaded += OnMissileLoad;
-        Strela2MLauncher.Fired += DisplayLaunchMode;
+        Strela2MLauncher.LaunchModeSet += DisplayLaunchMode;
     }
 
     private void Update()
@@ -31,16 +34,16 @@ public class Strela2MHUD : MonoBehaviour
         {
             DisplayAngleSetupValues();
 
-            if (_seeker.CurrentTarget.name.Equals(_currentTargetName) == false)
+            if (_seeker.CurrentTarget != null && _seeker.CurrentTarget.name.Equals(CurrentTargetName) == false)
             {
                 DisplayCurrentTargetName(_seeker.CurrentTarget.name);
             }
         }
         else
         {
-            if (string.IsNullOrEmpty(_currentTargetName) == false)
+            if (string.IsNullOrEmpty(CurrentTargetName) == false)
             {
-                _currentTargetName = string.Empty;
+                CurrentTargetName = string.Empty;
             }
         }
     }
@@ -49,7 +52,7 @@ public class Strela2MHUD : MonoBehaviour
     {
         Strela2MLauncher.IllegallyFired -= EnableNotificationtext;
         Strela2MLauncher.MissileLoaded -= OnMissileLoad;
-        Strela2MLauncher.Fired -= DisplayLaunchMode;
+        Strela2MLauncher.LaunchModeSet -= DisplayLaunchMode;
     }
 
     private void OnMissileLoad(Strela2MMissile missile)
@@ -60,7 +63,9 @@ public class Strela2MHUD : MonoBehaviour
     private void DisplayCurrentTargetName(string name)
     {
         _targetNameText.text = $"სამიზნე ობიექტი: {name}";
-        _currentTargetName = name;
+        CurrentTargetName = name;
+
+        Debug.Log(CurrentTargetName);
     }
 
     private void DisplayAngleSetupValues()
@@ -68,9 +73,10 @@ public class Strela2MHUD : MonoBehaviour
         _angleSetupText.text = $"გადახრები Y:{_strela2M.eulerAngles.y}";
     }
 
-    private void DisplayLaunchMode()
+    private void DisplayLaunchMode(LaunchMode launchMode)
     {
-        _launchModeText.text = $"სროლის რეჟიმი: {_launcher.MissileLaunchMode.ToString()}";
+        MissileLaunchMode = launchMode == LaunchMode.Automatic ? "აუტომატური" : "მექანიკური";
+        _launchModeText.text = $"სროლის რეჟიმი: {MissileLaunchMode}";
     }
 
     private void EnableNotificationtext()
