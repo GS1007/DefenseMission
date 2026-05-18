@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Strela2MHUD : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class Strela2MHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _angleSetupText;
     [SerializeField] private TextMeshProUGUI _launchModeText;
     [SerializeField] private TextMeshProUGUI _notificationText;
+
+    [SerializeField] private Image _lockProgressImage;
 
     [SerializeField] private Strela2MLauncher _launcher;
 
@@ -30,6 +33,13 @@ public class Strela2MHUD : MonoBehaviour
 
     private void Update()
     {
+        if (_seeker == null)
+        {
+            return;
+        }
+
+        DisplayLockProgress();
+
         if (_seeker.HasLock == true)
         {
             DisplayAngleSetupValues();
@@ -70,7 +80,11 @@ public class Strela2MHUD : MonoBehaviour
 
     private void DisplayAngleSetupValues()
     {
-        _angleSetupText.text = $"გადახრები Y:{_strela2M.eulerAngles.y}";
+        float rotX = Mathf.DeltaAngle(0, _strela2M.eulerAngles.x);
+        float rotY = Mathf.DeltaAngle(0, _strela2M.eulerAngles.y);
+        float rotZ = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
+
+        _angleSetupText.text = $"გადახრები X:{rotX} Y:{rotY} Z:{rotZ}";
     }
 
     private void DisplayLaunchMode(LaunchMode launchMode)
@@ -89,5 +103,10 @@ public class Strela2MHUD : MonoBehaviour
     private void DisableNotificationtext()
     {
         _notificationText.enabled = false;
+    }
+
+    private void DisplayLockProgress()
+    {
+        _lockProgressImage.fillAmount = _seeker.LockProgress;
     }
 }

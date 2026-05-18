@@ -12,6 +12,7 @@ public class Strela2MLauncher : MonoBehaviour
 
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
+    [SerializeField] private Transform _scanPoint;
 
     [SerializeField] private LayerMask _aircraftLayer;
 
@@ -40,7 +41,6 @@ public class Strela2MLauncher : MonoBehaviour
     private void Start()
     {
         _launchModeSetupDelay = new WaitForSeconds(_lauchModeSetupTime);
-        LoadMissile();
     }
 
     private void Update()
@@ -66,6 +66,7 @@ public class Strela2MLauncher : MonoBehaviour
     {
         LoadedMissile = Instantiate(_missilePrefab, _missileSpawnPoint);
         MissileLoaded?.Invoke(LoadedMissile);
+        LoadedMissile.Seeker.Init(_scanPoint);
     }
 
     private void OnBatteryPowerupStart()
@@ -77,6 +78,12 @@ public class Strela2MLauncher : MonoBehaviour
     {
         if (State != LauncherState.DeadBattery)
         {
+            
+            if(LoadedMissile == null)
+            {
+                LoadMissile();
+            }
+
             State = LauncherState.Ready;
         }
     }
@@ -100,9 +107,9 @@ public class Strela2MLauncher : MonoBehaviour
             return;
         }
 
-        Fire();
-
         _triggerIsHeld = true;
+
+        Fire();
     }
 
     private void Fire()

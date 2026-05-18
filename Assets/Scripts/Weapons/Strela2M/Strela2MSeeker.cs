@@ -20,6 +20,7 @@ public class Strela2MSeeker : MonoBehaviour
     private Vector3 _seekerWorldForward;
     private bool _isUncaged;
     private Transform _sunTransform;
+    private Transform _seekerTransform;
 
     public Transform CurrentTarget { get; private set; }
     public float SignalStrength { get; private set; }
@@ -27,28 +28,29 @@ public class Strela2MSeeker : MonoBehaviour
     public bool HasLock { get; private set; }
     public float LockProgress => Mathf.Clamp01(_currentLockTime / _lockDuration);
 
-    private void Start()
+    public void Init(Transform seekerTransform)
     {
+        _seekerTransform = seekerTransform;
         _sunTransform = GameObject.FindGameObjectWithTag("Sun").transform;
-        _seekerWorldForward = transform.forward;
-        _lastForward = transform.forward;
+        _seekerWorldForward = _seekerTransform.forward;
+        _lastForward = _seekerTransform.forward;
     }
 
     public void DoUpdate()
     {
-        float frameTurnSpeed = Vector3.Angle(_lastForward, transform.forward);
+        float frameTurnSpeed = Vector3.Angle(_lastForward, _seekerTransform.forward);
         _lastForward = transform.forward;
 
         if (_isUncaged && CurrentTarget != null)
         {
-            Vector3 dirToTarget = (CurrentTarget.position - transform.position).normalized;
+            Vector3 dirToTarget = (CurrentTarget.position - _seekerTransform.position).normalized;
             _seekerWorldForward = Vector3.RotateTowards(
                 _seekerWorldForward,
                 dirToTarget,
                 _maxTurnRate * Mathf.Deg2Rad * Time.deltaTime,
                 0f);
 
-            float gimbalAngle = Vector3.Angle(transform.forward, _seekerWorldForward);
+            float gimbalAngle = Vector3.Angle(_seekerTransform.forward, _seekerWorldForward);
 
             if (gimbalAngle > _gimbalLimit)
             {
@@ -58,7 +60,7 @@ public class Strela2MSeeker : MonoBehaviour
         }
         else
         {
-            _seekerWorldForward = transform.forward;
+            _seekerWorldForward = _seekerTransform.forward;
 
             if (frameTurnSpeed > _maxTurnRate)
             {
@@ -74,7 +76,7 @@ public class Strela2MSeeker : MonoBehaviour
             if (SignalStrength > 0.6f)
                 _currentLockTime += Time.deltaTime;
             else
-                _currentLockTime -= Time.deltaTime * 2.0f;
+                _currentLockTime -= Time.deltaTime;
 
             _currentLockTime = Mathf.Clamp(_currentLockTime, 0f, _lockDuration);
 
@@ -82,15 +84,26 @@ public class Strela2MSeeker : MonoBehaviour
             {
                 HasLock = true;
                 _isUncaged = true;
-                _seekerWorldForward = transform.forward;
+                _seekerWorldForward = _seekerTransform.forward;
             }
         }
+    }
+
+    public void ResetSeeker()
+    {
+        _currentLockTime = 0f;
+        HasLock = false;
+        _isUncaged = false;
+        SignalStrength = 0f;
+        CurrentTarget = null;
+        CurrentTargetType = TargetType.None;
+        _seekerWorldForward = _seekerTransform.forward;
     }
 
     private void ScanForTargets()
     {
         int combinedMask = _aircraftLayer.value | _flareLayer.value;
-        Collider[] contacts = Physics.OverlapSphere(transform.position, _lockRange, combinedMask);
+        Collider[] contacts = Physics.OverlapSphere(_seekerTransform.position, _lockRange, combinedMask);
 
         Transform bestTarget = null;
         float highestSignal = 0f;
@@ -98,17 +111,17 @@ public class Strela2MSeeker : MonoBehaviour
 
         foreach (Collider col in contacts)
         {
-            Vector3 dirToTarget = (col.transform.position - transform.position).normalized;
+            Vector3 dirToTarget = (col.transform.position - _seekerTransform.position).normalized;
 
             float angle = Vector3.Angle(_seekerWorldForward, dirToTarget);
 
             if (angle > _seekerFOV / 2f) continue;
 
-            if (Physics.Linecast(transform.position, col.transform.position, _occlusionLayers)) continue;
+            if (Physics.Linecast(_seekerTransform.position, col.transform.position, _occlusionLayers)) continue;
 
             float targetSignal = CalculateThermalSignature(col.gameObject, dirToTarget, angle);
 
-            float dist = Vector3.Distance(transform.position, col.transform.position);
+            float dist = Vector3.Distance(_seekerTransform.position, col.transform.position);
             targetSignal *= Mathf.Clamp01(1f - (dist / _lockRange));
 
             if (targetSignal > highestSignal)
@@ -121,7 +134,7 @@ public class Strela2MSeeker : MonoBehaviour
             }
         }
 
-        Vector3 dirToSun = (_sunTransform.position - transform.position).normalized;
+        Vector3 dirToSun = (_sunTransform.position - _seekerTransform.position).normalized;
         float angleToSun = Vector3.Angle(_seekerWorldForward, dirToSun);
 
         // if (angleToSun < 30f)
@@ -159,16 +172,5 @@ public class Strela2MSeeker : MonoBehaviour
         }
 
         return reticleFactor * aspectFactor * heatMultiplier;
-    }
-
-    public void ResetSeeker()
-    {
-        _currentLockTime = 0f;
-        HasLock = false;
-        _isUncaged = false;
-        SignalStrength = 0f;
-        CurrentTarget = null;
-        CurrentTargetType = TargetType.None;
-        _seekerWorldForward = transform.forward;
     }
 }

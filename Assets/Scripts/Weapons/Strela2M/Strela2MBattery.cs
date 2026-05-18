@@ -40,7 +40,7 @@ public class Strela2MBattery : MonoBehaviour
 
     private void PowerUp()
     {
-        if (_launcher.State == LauncherState.Off && _launcher.LoadedMissile != null)
+        if (_launcher.State == LauncherState.Off)
         {
             _currentBatteryTime = _maxBatteryLife;
 
