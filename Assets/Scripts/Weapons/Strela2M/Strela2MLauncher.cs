@@ -45,7 +45,7 @@ public class Strela2MLauncher : MonoBehaviour
 
     private void Update()
     {
-        if (State != LauncherState.Ready || LoadedMissile == null)
+        if (State != LauncherState.Ready)
         {
             return;
         }
@@ -85,7 +85,7 @@ public class Strela2MLauncher : MonoBehaviour
     {
         IllegallyFired?.Invoke();
 
-        if (State != LauncherState.Ready || LoadedMissile == null)
+        if (State != LauncherState.Ready)
         {
             return;
         }
@@ -95,7 +95,7 @@ public class Strela2MLauncher : MonoBehaviour
 
     private void OnTroggerPullingEnd()
     {
-        if (State != LauncherState.Ready || _triggerIsHeld == true || LoadedMissile == null)
+        if (State != LauncherState.Ready || _triggerIsHeld == true)
         {
             return;
         }
