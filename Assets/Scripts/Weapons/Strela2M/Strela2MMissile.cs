@@ -22,9 +22,7 @@ public class Strela2MMissile : MonoBehaviour
     private Transform _target;
     private TargetType _targetType;
 
-    private IIRSeeker _currentSeeker;
-
-    public IIRSeeker Seeker { get { return _currentSeeker; } }
+    public Strela2MSeeker Seeker { get { return _seeker; } }
 
     private void FixedUpdate()
     {
@@ -67,11 +65,6 @@ public class Strela2MMissile : MonoBehaviour
         }
     }
 
-    public void Init(bool isRealisticSeeker, IRSeeker seeker)
-    {
-        _currentSeeker = isRealisticSeeker ? _seeker : seeker;
-    }
-
     public void Launch(Transform target)
     {
         transform.parent = null;
@@ -80,7 +73,7 @@ public class Strela2MMissile : MonoBehaviour
         _rb.useGravity = true;
 
         _target = target;
-        // _targetType = _seeker.CurrentTargetType;
+        _targetType = _seeker.CurrentTargetType;
         _targetType = TargetType.Aircraft;
 
         if (_target != null) _lastTargetPos = _target.position;

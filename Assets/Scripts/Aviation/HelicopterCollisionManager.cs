@@ -4,6 +4,7 @@ using UnityEngine.Events;
 public class HelicopterCollisionManager : MonoBehaviour, IDamageable, IAircraftTarget
 {
     [SerializeField] private GameObject _damagedAircraftPrefab;
+    [SerializeField] private GameObject _exposionVFX;
 
     [SerializeField] private Transform _sweetSpot;
     [SerializeField] private Transform _damagePoint;
@@ -58,6 +59,7 @@ public class HelicopterCollisionManager : MonoBehaviour, IDamageable, IAircraftT
         {
             _rb.isKinematic = false;
             _partiallyDamaged = true;
+            Instantiate(_exposionVFX, _currentHitPoint);
         }
         else
         {

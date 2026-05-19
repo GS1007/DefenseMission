@@ -17,11 +17,11 @@ public class Strela2MHUD : MonoBehaviour
 
     [SerializeField] private float _notificationDissapearTime = 3f;
 
-    private IIRSeeker _seeker;
+    private Strela2MSeeker _seeker;
 
     public string CurrentTargetName { get; private set; }
     public string MissileLaunchMode { get; private set; }
-    public float AngleSettings { get { return Mathf.DeltaAngle(0, _strela2M.eulerAngles.x); } }
+    public float AngleSettings { get { return Mathf.DeltaAngle(0, _strela2M.eulerAngles.z); } }
     public AircraftType TypeOfAircraft { get { return _seeker.CurrentTarget.GetComponent<IAircraftTarget>().GetAircraftType(); } }
 
     private void OnEnable()
@@ -39,11 +39,10 @@ public class Strela2MHUD : MonoBehaviour
         }
 
         DisplayLockProgress();
+        DisplayAngleSetupValues();
 
         if (_seeker.HasLock == true)
         {
-            DisplayAngleSetupValues();
-
             if (_seeker.CurrentTarget != null && _seeker.CurrentTarget.name.Equals(CurrentTargetName) == false)
             {
                 DisplayCurrentTargetName(_seeker.CurrentTarget.name);
@@ -80,16 +79,14 @@ public class Strela2MHUD : MonoBehaviour
 
     private void DisplayAngleSetupValues()
     {
-        float rotX = Mathf.DeltaAngle(0, _strela2M.eulerAngles.x);
-        float rotY = Mathf.DeltaAngle(0, _strela2M.eulerAngles.y);
-        float rotZ = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
+        float angle = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
 
-        _angleSetupText.text = $"გადახრები X:{rotX} Y:{rotY} Z:{rotZ}";
+        _angleSetupText.text = $"გადახრა: {angle:F1}";
     }
 
     private void DisplayLaunchMode(LaunchMode launchMode)
     {
-        MissileLaunchMode = launchMode == LaunchMode.Automatic ? "აუტომატური" : "მექანიკური";
+        MissileLaunchMode = launchMode == LaunchMode.Automatic ? "ავტომატური" : "ხელის";
         _launchModeText.text = $"სროლის რეჟიმი: {MissileLaunchMode}";
     }
 
@@ -107,6 +104,6 @@ public class Strela2MHUD : MonoBehaviour
 
     private void DisplayLockProgress()
     {
-        _lockProgressImage.fillAmount = _seeker.GetLockProgress();
+        _lockProgressImage.fillAmount = _seeker.LockProgress;
     }
 }

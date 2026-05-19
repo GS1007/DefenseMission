@@ -15,8 +15,8 @@ public class FireReportUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _launchModeText;
 
     [Header("Aircraft Sprites")]
-    [SerializeField] private Sprite _helicopterSprite;
-    [SerializeField] private Sprite _jetSprite;
+    [SerializeField] private Sprite _mi24Sprite;
+    [SerializeField] private Sprite _su25Sprite;
 
     [Header("References")]
     [SerializeField] private Strela2MHUD _instructorPanel;
@@ -61,9 +61,10 @@ public class FireReportUI : MonoBehaviour
         _successFulFireReportPanel.SetActive(true);
 
         _hitPointRect.anchoredPosition = _fireResultDatas[_resultDataIndex].HitPoint;
-        _targetNameText.text = _fireResultDatas[_resultDataIndex].TargetObjectName;
-        _angleSettingsText.text = _fireResultDatas[_resultDataIndex].AngleSettings.ToString();
-        _launchModeText.text = _fireResultDatas[_resultDataIndex].LaunchMode;
+        _targetNameText.text = $"სამიზნე ობიექტი: {_fireResultDatas[_resultDataIndex].TargetObjectName}";
+        _angleSettingsText.text = $"გადახრა: {_fireResultDatas[_resultDataIndex].AngleSettings.ToString()}";
+        _launchModeText.text = $"სროლის რეჟიმი {_fireResultDatas[_resultDataIndex].LaunchMode}";
+        _aircraftImage.sprite = _fireResultDatas[_resultDataIndex].TargetSprite;
     }
 
     private void AddFireResultData(bool hit)
@@ -71,6 +72,7 @@ public class FireReportUI : MonoBehaviour
         _fireResultDatas.Add(new FireResultData()
         {
             TargetObjectName = _instructorPanel.CurrentTargetName,
+            TargetSprite = _instructorPanel.TypeOfAircraft == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
             TypeOfAircraft = _instructorPanel.TypeOfAircraft,
             AngleSettings = _instructorPanel.AngleSettings,
             LaunchMode = _instructorPanel.MissileLaunchMode,

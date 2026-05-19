@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Strela2MSeeker : MonoBehaviour, IIRSeeker
+public class Strela2MSeeker : MonoBehaviour
 {
     [Header("Detection Settings")]
     [SerializeField] private float _lockRange = 4000f;
@@ -30,6 +30,8 @@ public class Strela2MSeeker : MonoBehaviour, IIRSeeker
     public float SignalStrength { get; private set; }
     public TargetType CurrentTargetType { get; private set; }
     public bool HasLock { get; private set; }
+
+    public float LockProgress { get { return Mathf.Clamp01(_currentLockTime / _lockDuration); } }
 
     private void Start()
     {
@@ -112,7 +114,7 @@ public class Strela2MSeeker : MonoBehaviour, IIRSeeker
         }
     }
 
-    public void ScanForTargets()
+    private void ScanForTargets()
     {
         int combinedMask = _aircraftLayer.value | _flareLayer.value;
         Collider[] contacts = Physics.OverlapSphere(transform.position, _lockRange, combinedMask);
@@ -150,12 +152,7 @@ public class Strela2MSeeker : MonoBehaviour, IIRSeeker
         CurrentTargetType = detectedType;
     }
 
-    public float GetLockProgress()
-    {
-        return Mathf.Clamp01(_currentLockTime / _lockDuration); ;
-    }
-
-    public void ResetSeeker()
+    private void ResetSeeker()
     {
         _currentLockTime = 0f;
         HasLock = false;

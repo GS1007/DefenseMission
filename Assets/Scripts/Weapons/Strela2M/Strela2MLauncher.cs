@@ -17,11 +17,8 @@ public class Strela2MLauncher : MonoBehaviour
     [SerializeField] private LayerMask _aircraftLayer;
 
     [SerializeField] private Strela2MMissile _missilePrefab;
-    [SerializeField] private IRSeeker _seeker;
 
     [SerializeField] private float _lauchModeSetupTime = 0f;
-
-    [SerializeField] private bool _isRealisticSeeker = false;
 
     private bool _triggerIsHeld = false;
 
@@ -68,7 +65,6 @@ public class Strela2MLauncher : MonoBehaviour
     private void LoadMissile()
     {
         LoadedMissile = Instantiate(_missilePrefab, _missileSpawnPoint);
-        LoadedMissile.Init(_isRealisticSeeker, _seeker);
         MissileLoaded?.Invoke(LoadedMissile);
     }
 
@@ -117,7 +113,7 @@ public class Strela2MLauncher : MonoBehaviour
 
     private void Fire()
     {
-        IIRSeeker seeker = LoadedMissile.Seeker;
+        Strela2MSeeker seeker = LoadedMissile.Seeker;
 
         if (_launchMode == LaunchMode.Automatic && seeker.HasLock == false)
         {
@@ -131,6 +127,8 @@ public class Strela2MLauncher : MonoBehaviour
             if (seeker.CurrentTarget.TryGetComponent(out IAircraftTarget aircraftTarget) == true)
             {
                 bool hit = CheckAngle();
+
+                Debug.Log(hit);
 
                 finalTarget = hit ? aircraftTarget.GetSweetSpot() : aircraftTarget.GetDamagePoint();
 
@@ -152,7 +150,7 @@ public class Strela2MLauncher : MonoBehaviour
 
     private bool CheckAngle()
     {
-        return Physics.SphereCast(_angleSetupPoint.position, 4f, _angleSetupPoint.forward, out RaycastHit hit, 4000f, _aircraftLayer);
+        return Physics.SphereCast(_angleSetupPoint.position, 10f, _angleSetupPoint.forward, out RaycastHit hit, 4000f, _aircraftLayer);
     }
 
     private IEnumerator SetLaunchMode()
