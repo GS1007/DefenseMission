@@ -58,8 +58,12 @@ public class Strela2MMissile : MonoBehaviour
             Debug.Log($"Hit: {collision.gameObject.name}");
 
             IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+
             if (damageable != null)
+            {
+                Debug.Log(collision.contacts[0].point);
                 damageable.ReceiveDamage();
+            }
 
             Destroy(gameObject);
         }

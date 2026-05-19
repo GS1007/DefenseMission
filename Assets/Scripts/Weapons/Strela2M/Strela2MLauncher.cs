@@ -124,20 +124,22 @@ public class Strela2MLauncher : MonoBehaviour
 
         if (seeker.HasLock == true && seeker.CurrentTarget != null)
         {
-            if (seeker.CurrentTarget.TryGetComponent(out IAircraftTarget aircraftTarget) == true)
-            {
-                bool hit = CheckAngle();
+            // if (seeker.CurrentTarget.TryGetComponent(out IAircraftTarget aircraftTarget) == true)
+            // {
+            //     bool hit = CheckAngle();
 
-                Debug.Log(hit);
+            //     Debug.Log(hit);
 
-                finalTarget = hit ? aircraftTarget.GetSweetSpot() : aircraftTarget.GetDamagePoint();
+            //     finalTarget = hit ? aircraftTarget.GetSweetSpot() : aircraftTarget.GetDamagePoint();
 
-                MissileLaunched?.Invoke(hit);
-            }
-            else
-            {
-                finalTarget = seeker.CurrentTarget.transform;
-            }
+            //     MissileLaunched?.Invoke(hit);
+            // }
+            // else
+            // {
+            //     finalTarget = seeker.CurrentTarget.transform;
+            // }
+
+            finalTarget = seeker.CurrentTarget.transform;
         }
 
         LoadedMissile.Launch(finalTarget);
