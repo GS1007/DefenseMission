@@ -20,7 +20,7 @@ public class Strela2MAudioController : MonoBehaviour
 
     private AudioClip _currentClip;
 
-    private Strela2MSeeker _seeker;
+    private IIRSeeker _seeker;
 
     private void OnEnable()
     {
@@ -50,11 +50,11 @@ public class Strela2MAudioController : MonoBehaviour
 
         if (!_seekerSource.isPlaying) _seekerSource.Play();
 
-        float progress = _seeker.LockProgress;
+        float progress = _seeker.GetLockProgress();
         bool isLocked = _seeker.HasLock;
-        float signal = _seeker.SignalStrength;
+        // float signal = _seeker.SignalStrength;
 
-        if (signal > 0)
+        if (progress > 0)
         {
             _seekerSource.volume = Mathf.Lerp(_baseVolume, _maxVolume, progress + 0.2f);
 

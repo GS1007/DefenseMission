@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
   _lockRange: 4200
-  _seekerFOV: 20
+  _seekerFOV: 5
   _aircraftLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -56,9 +56,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _lockDuration: 3
-  _maxTurnRate: 1.5
+  _maxSlewRate: 90
+  _seekerTrackRate: 30
   _flareHeatMultiplier: 3
-  _gimbalLimit: 20
+  _gimbalLimit: 40
+  _flareTrackDecayRate: 1.5
+  _signalLockThreshold: 0.1
 --- !u!1 &6313387835446921533
 GameObject:
   m_ObjectHideFlags: 0

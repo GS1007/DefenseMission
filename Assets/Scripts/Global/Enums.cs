@@ -2,6 +2,6 @@ public enum LaunchMode { Automatic, Manual }
 
 public enum LauncherState { Off, SpinningUp, Ready, Empty, DeadBattery }
 
-public enum TargetType { None, Aircraft, Sun, Cloud }
+public enum TargetType { None, Aircraft, Sun, Cloud, Flare }
 
-public enum AircraftType { Helicopter, Jet }
+public enum AircraftType { MI24, SU25 }

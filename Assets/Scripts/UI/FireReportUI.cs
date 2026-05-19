@@ -74,7 +74,7 @@ public class FireReportUI : MonoBehaviour
             TypeOfAircraft = _instructorPanel.TypeOfAircraft,
             AngleSettings = _instructorPanel.AngleSettings,
             LaunchMode = _instructorPanel.MissileLaunchMode,
-            HitPoint = _instructorPanel.TypeOfAircraft == AircraftType.Helicopter ?
+            HitPoint = _instructorPanel.TypeOfAircraft == AircraftType.MI24 ?
             (hit ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f)) : (hit ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f))
         });
     }

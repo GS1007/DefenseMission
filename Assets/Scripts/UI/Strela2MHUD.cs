@@ -17,11 +17,11 @@ public class Strela2MHUD : MonoBehaviour
 
     [SerializeField] private float _notificationDissapearTime = 3f;
 
-    private Strela2MSeeker _seeker;
+    private IIRSeeker _seeker;
 
     public string CurrentTargetName { get; private set; }
     public string MissileLaunchMode { get; private set; }
-    public Vector3 AngleSettings { get { return _strela2M.eulerAngles; } }
+    public float AngleSettings { get { return Mathf.DeltaAngle(0, _strela2M.eulerAngles.x); } }
     public AircraftType TypeOfAircraft { get { return _seeker.CurrentTarget.GetComponent<IAircraftTarget>().GetAircraftType(); } }
 
     private void OnEnable()
@@ -107,6 +107,6 @@ public class Strela2MHUD : MonoBehaviour
 
     private void DisplayLockProgress()
     {
-        _lockProgressImage.fillAmount = _seeker.LockProgress;
+        _lockProgressImage.fillAmount = _seeker.GetLockProgress();
     }
 }
