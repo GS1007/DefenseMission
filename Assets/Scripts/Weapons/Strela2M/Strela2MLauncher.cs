@@ -8,11 +8,11 @@ public class Strela2MLauncher : MonoBehaviour
     public static event Action Fired;
     public static event Action IllegallyFired;
     public static event Action<LaunchMode> LaunchModeSet;
-    public static event Action<bool> MissileLaunched;
 
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
     [SerializeField] private Transform _scanPoint;
+    [SerializeField] private Transform _tempMI24;
 
     [SerializeField] private LayerMask _aircraftLayer;
 
@@ -120,39 +120,12 @@ public class Strela2MLauncher : MonoBehaviour
             return;
         }
 
-        Transform finalTarget = null;
-
-        if (seeker.HasLock == true && seeker.CurrentTarget != null)
-        {
-            // if (seeker.CurrentTarget.TryGetComponent(out IAircraftTarget aircraftTarget) == true)
-            // {
-            //     bool hit = CheckAngle();
-
-            //     Debug.Log(hit);
-
-            //     finalTarget = hit ? aircraftTarget.GetSweetSpot() : aircraftTarget.GetDamagePoint();
-
-            //     MissileLaunched?.Invoke(hit);
-            // }
-            // else
-            // {
-            //     finalTarget = seeker.CurrentTarget.transform;
-            // }
-
-            finalTarget = seeker.CurrentTarget.transform;
-        }
-
-        LoadedMissile.Launch(finalTarget);
+        LoadedMissile.Launch();
         LoadedMissile = null;
         State = LauncherState.Off;
         _triggerIsHeld = false;
 
         Fired?.Invoke();
-    }
-
-    private bool CheckAngle()
-    {
-        return Physics.SphereCast(_angleSetupPoint.position, 10f, _angleSetupPoint.forward, out RaycastHit hit, 4000f, _aircraftLayer);
     }
 
     private IEnumerator SetLaunchMode()

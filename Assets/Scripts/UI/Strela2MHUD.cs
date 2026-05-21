@@ -11,10 +11,6 @@ public class Strela2MHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _launchModeText;
     [SerializeField] private TextMeshProUGUI _notificationText;
 
-    [SerializeField] private Image _lockProgressImage;
-
-    [SerializeField] private Strela2MLauncher _launcher;
-
     [SerializeField] private float _notificationDissapearTime = 3f;
 
     private Strela2MSeeker _seeker;
@@ -38,7 +34,6 @@ public class Strela2MHUD : MonoBehaviour
             return;
         }
 
-        DisplayLockProgress();
         DisplayAngleSetupValues();
 
         if (_seeker.HasLock == true)
@@ -100,10 +95,5 @@ public class Strela2MHUD : MonoBehaviour
     private void DisableNotificationtext()
     {
         _notificationText.enabled = false;
-    }
-
-    private void DisplayLockProgress()
-    {
-        _lockProgressImage.fillAmount = _seeker.LockProgress;
     }
 }

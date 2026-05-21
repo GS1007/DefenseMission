@@ -18,30 +18,45 @@ public class Strela2MMissile : MonoBehaviour
     private bool _isAirborne = false;
     private bool _motorIgnited = false;
     private float _guidanceStartTime;
-    private Vector3 _lastTargetPos;
+    private Vector3 _lastLosVector;
+
     private Transform _target;
     private TargetType _targetType;
 
-    public Strela2MSeeker Seeker { get { return _seeker; } }
+    public Strela2MSeeker Seeker => _seeker;
 
     private void FixedUpdate()
     {
-        Vector3 targetVelocity = Vector3.zero;
-
-        if (_target != null)
+        if (_isAirborne == true)
         {
-            targetVelocity = (_target.position - _lastTargetPos) / Time.fixedDeltaTime;
-            _lastTargetPos = _target.position;
+            _seeker.DoUpdate();
+
+            if (_target != _seeker.CurrentTarget && _seeker.CurrentTarget != null)
+            {
+                _lastLosVector = (_seeker.CurrentTarget.position - transform.position).normalized;
+            }
+
+            _target = _seeker.CurrentTarget;
+            _targetType = _seeker.CurrentTargetType;
         }
 
         if (!_motorIgnited) return;
 
-        if (_target != null && Time.time > _guidanceStartTime + 0.1f)
+        if (_target == null || _targetType == TargetType.None)
+        {
+            if (_rb.linearVelocity.sqrMagnitude > 1f)
+                transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
+
+            ApplyThrust();
+            return;
+        }
+
+        if (Time.time > _guidanceStartTime + 0.1f)
         {
             if (_targetType == TargetType.Sun)
                 ApplySunGuidance();
             else
-                ApplyProportionalNavigation(targetVelocity);
+                ApplyProportionalNavigation();
         }
         else if (_rb.linearVelocity.sqrMagnitude > 1f)
         {
@@ -55,59 +70,68 @@ public class Strela2MMissile : MonoBehaviour
     {
         if (_isAirborne == true)
         {
-            Debug.Log($"Hit: {collision.gameObject.name}");
+            AircraftHitZone aircraftHitZone = collision.gameObject.GetComponent<AircraftHitZone>();
 
-            IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-
-            if (damageable != null)
+            if (aircraftHitZone != null)
             {
-                Debug.Log(collision.contacts[0].point);
-                damageable.ReceiveDamage();
+                IDamageable damageable = aircraftHitZone.GetDamageable;
+
+                if (damageable != null)
+                {
+                    if (aircraftHitZone.HitZoneType == AircraftHitZoneType.SweetSpot)
+                    {
+                        damageable.ReceiveCriticalDamage();
+                    }
+                    else
+                    {
+                        damageable.ReceiveDamage();
+                    }
+                }
             }
 
             Destroy(gameObject);
         }
     }
 
-    public void Launch(Transform target)
+    public void Launch()
     {
         transform.parent = null;
         _isAirborne = true;
         _rb.isKinematic = false;
         _rb.useGravity = true;
 
-        _target = target;
+        _target = _seeker.CurrentTarget;
         _targetType = _seeker.CurrentTargetType;
-        _targetType = TargetType.Aircraft;
 
-        if (_target != null) _lastTargetPos = _target.position;
+        if (_target != null)
+        {
+            _lastLosVector = (_target.position - transform.position).normalized;
+        }
 
         _rb.AddForce(transform.forward * _ejectionForce, ForceMode.VelocityChange);
         StartCoroutine(IgniteSustainer(_sustainerDelay));
     }
 
-    private void ApplyProportionalNavigation(Vector3 safeTargetVelocity)
+    private void ApplyProportionalNavigation()
     {
-        float distance = Vector3.Distance(transform.position, _target.position);
-        float currentSpeed = Mathf.Max(_rb.linearVelocity.magnitude, 10f);
-        float timeToTarget = Mathf.Min(distance / currentSpeed, 3f);
+        Vector3 currentLos = (_target.position - transform.position).normalized;
 
-        Vector3 interceptPoint = _target.position + (safeTargetVelocity * timeToTarget);
-        Vector3 desiredDirection = (interceptPoint - transform.position).normalized;
+        Vector3 losRotationAxis = Vector3.Cross(_lastLosVector, currentLos);
+        float losAngleDelta = Vector3.Angle(_lastLosVector, currentLos) * Mathf.Deg2Rad;
+        Vector3 angularVelocityLos = (losRotationAxis.normalized * losAngleDelta) / Time.fixedDeltaTime;
 
-        float turnSpeed = _navigationConstant * 10f;
+        _lastLosVector = currentLos;
 
-        _rb.linearVelocity = Vector3.RotateTowards(
-            _rb.linearVelocity,
-            desiredDirection * _rb.linearVelocity.magnitude,
-            turnSpeed * Mathf.Deg2Rad * Time.fixedDeltaTime,
-            0f
-        );
+        Vector3 missileVelocity = _rb.linearVelocity;
+        Vector3 lateralAccelerationCommand = Vector3.Cross(angularVelocityLos * _navigationConstant, missileVelocity);
+
+        _rb.linearVelocity += lateralAccelerationCommand * Time.fixedDeltaTime;
+
+        if (_rb.linearVelocity.magnitude > _maxSpeed)
+            _rb.linearVelocity = _rb.linearVelocity.normalized * _maxSpeed;
 
         if (_rb.linearVelocity.sqrMagnitude > 0.1f)
-        {
             transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
-        }
     }
 
     private void ApplySunGuidance()
@@ -121,9 +145,7 @@ public class Strela2MMissile : MonoBehaviour
     private void ApplyThrust()
     {
         if (_rb.linearVelocity.magnitude < _maxSpeed)
-        {
             _rb.AddForce(transform.forward * _sustainerThrust, ForceMode.Acceleration);
-        }
     }
 
     private IEnumerator IgniteSustainer(float delay)
@@ -131,9 +153,8 @@ public class Strela2MMissile : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         _motorIgnited = true;
-        _rb.useGravity = false;
-        _guidanceStartTime = Time.time;
 
+        _guidanceStartTime = Time.time;
         Destroy(gameObject, _selfDestructTime);
     }
 }

@@ -27,14 +27,14 @@ public class FireReportUI : MonoBehaviour
 
     private void OnEnable()
     {
-        Strela2MLauncher.MissileLaunched += AddFireResultData;
         AviationManager.SimulationEnded += DisplayFireResultData;
+        AircraftCollisionManager.DamagedReceived += AddFireResultData;
     }
 
     private void OnDisable()
     {
-        Strela2MLauncher.MissileLaunched -= AddFireResultData;
         AviationManager.SimulationEnded -= DisplayFireResultData;
+        AircraftCollisionManager.DamagedReceived -= AddFireResultData;
     }
 
     public void OnNextButtonClick()
@@ -67,7 +67,7 @@ public class FireReportUI : MonoBehaviour
         _aircraftImage.sprite = _fireResultDatas[_resultDataIndex].TargetSprite;
     }
 
-    private void AddFireResultData(bool hit)
+    private void AddFireResultData(bool isDamageCritical)
     {
         _fireResultDatas.Add(new FireResultData()
         {
@@ -77,7 +77,7 @@ public class FireReportUI : MonoBehaviour
             AngleSettings = _instructorPanel.AngleSettings,
             LaunchMode = _instructorPanel.MissileLaunchMode,
             HitPoint = _instructorPanel.TypeOfAircraft == AircraftType.MI24 ?
-            (hit ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f)) : (hit ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f))
+            (isDamageCritical ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f)) : (isDamageCritical ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f))
         });
     }
 }

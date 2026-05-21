@@ -36,14 +36,17 @@ public class AircraftDestructor : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground") == true && _isCrashing == true && _hitGround == false)
         {
-            HandleGroundImpact(collision);
+            HandleGroundImpact();
         }
     }
 
     private void ShatterAircraft()
     {
+        Instantiate(_explosionPrefab, _aircraft.transform);
+
         foreach (Rigidbody rb in _parts)
         {
+            rb.transform.parent = null;
             rb.AddExplosionForce(_explosionForce, transform.position, _explosionRadius, _upwardModifier, ForceMode.Impulse);
             rb.AddTorque(Random.insideUnitSphere * _explosionForce, ForceMode.Impulse);
         }
@@ -59,7 +62,7 @@ public class AircraftDestructor : MonoBehaviour
         _activeCrashRoutine = StartCoroutine(_crashBehavior.CrashRoutine(_rb, () => _hitGround));
     }
 
-    private void HandleGroundImpact(Collision collision)
+    private void HandleGroundImpact()
     {
         _hitGround = true;
 
@@ -68,14 +71,13 @@ public class AircraftDestructor : MonoBehaviour
             StopCoroutine(_activeCrashRoutine);
         }
 
-        if (_explosionPrefab != null)
-        {
-            ContactPoint contact = collision.contacts[0];
-            Instantiate(_explosionPrefab, contact.point, Quaternion.identity);
-        }
-
         _rb.angularVelocity = Vector3.zero;
         _rb.linearVelocity = _rb.linearVelocity * 0.2f;
+
+        foreach (Rigidbody rb in _parts)
+        {
+            rb.transform.parent = _aircraft.transform;
+        }
 
         Destroy(_aircraft, _lifeTimeAfterCrash);
     }
