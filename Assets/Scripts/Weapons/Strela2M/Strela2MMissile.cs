@@ -27,18 +27,15 @@ public class Strela2MMissile : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_isAirborne == true)
-        {
-            _seeker.DoUpdate();
+        if (!_isAirborne) return;
 
-            if (_target != _seeker.CurrentTarget && _seeker.CurrentTarget != null)
-            {
-                _lastLosVector = (_seeker.CurrentTarget.position - transform.position).normalized;
-            }
+        _seeker.DoUpdate();
 
-            _target = _seeker.CurrentTarget;
-            _targetType = _seeker.CurrentTargetType;
-        }
+        if (_target != _seeker.CurrentTarget && _seeker.CurrentTarget != null)
+            _lastLosVector = (_seeker.CurrentTarget.position - transform.position).normalized;
+
+        _target = _seeker.CurrentTarget;
+        _targetType = _seeker.CurrentTargetType;
 
         if (!_motorIgnited) return;
 
@@ -64,33 +61,33 @@ public class Strela2MMissile : MonoBehaviour
         }
 
         ApplyThrust();
+
+        if (_rb.linearVelocity.magnitude > _maxSpeed)
+            _rb.linearVelocity = _rb.linearVelocity.normalized * _maxSpeed;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_isAirborne == true)
+        if (!_isAirborne) return;
+
+        AircraftHitZone aircraftHitZone = collision.gameObject.GetComponent<AircraftHitZone>();
+
+        if (aircraftHitZone != null)
         {
-            AircraftHitZone aircraftHitZone = collision.gameObject.GetComponent<AircraftHitZone>();
+            IDamageable damageable = aircraftHitZone.GetDamageable;
 
-            if (aircraftHitZone != null)
+            Debug.Log(collision.gameObject);
+
+            if (damageable != null)
             {
-                IDamageable damageable = aircraftHitZone.GetDamageable;
-
-                if (damageable != null)
-                {
-                    if (aircraftHitZone.HitZoneType == AircraftHitZoneType.SweetSpot)
-                    {
-                        damageable.ReceiveCriticalDamage();
-                    }
-                    else
-                    {
-                        damageable.ReceiveDamage();
-                    }
-                }
+                if (aircraftHitZone.HitZoneType == AircraftHitZoneType.SweetSpot)
+                    damageable.ReceiveCriticalDamage();
+                else
+                    damageable.ReceiveDamage();
             }
-
-            Destroy(gameObject);
         }
+
+        Destroy(gameObject);
     }
 
     public void Launch()
@@ -104,9 +101,7 @@ public class Strela2MMissile : MonoBehaviour
         _targetType = _seeker.CurrentTargetType;
 
         if (_target != null)
-        {
             _lastLosVector = (_target.position - transform.position).normalized;
-        }
 
         _rb.AddForce(transform.forward * _ejectionForce, ForceMode.VelocityChange);
         StartCoroutine(IgniteSustainer(_sustainerDelay));
@@ -126,9 +121,6 @@ public class Strela2MMissile : MonoBehaviour
         Vector3 lateralAccelerationCommand = Vector3.Cross(angularVelocityLos * _navigationConstant, missileVelocity);
 
         _rb.linearVelocity += lateralAccelerationCommand * Time.fixedDeltaTime;
-
-        if (_rb.linearVelocity.magnitude > _maxSpeed)
-            _rb.linearVelocity = _rb.linearVelocity.normalized * _maxSpeed;
 
         if (_rb.linearVelocity.sqrMagnitude > 0.1f)
             transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
@@ -153,6 +145,9 @@ public class Strela2MMissile : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         _motorIgnited = true;
+
+        if (_target != null)
+            _lastLosVector = (_target.position - transform.position).normalized;
 
         _guidanceStartTime = Time.time;
         Destroy(gameObject, _selfDestructTime);

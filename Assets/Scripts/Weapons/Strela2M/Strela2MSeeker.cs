@@ -182,7 +182,7 @@ public class Strela2MSeeker : MonoBehaviour
         {
             float rawDot = Vector3.Dot(contact.transform.forward, dirToTarget);
             float mappedDot = (rawDot + 1f) / 2f;
-            aspectFactor = Mathf.Lerp(0.75f, 1.0f, Mathf.Pow(mappedDot, 2f));
+            aspectFactor = Mathf.Lerp(0.9f, 1.0f, Mathf.Pow(mappedDot, 2f));
         }
         else if (((1 << contact.layer) & _flareLayer.value) != 0)
         {

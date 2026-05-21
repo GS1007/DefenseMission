@@ -9,6 +9,8 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
     [SerializeField] private GameObject _damagedAircraftPrefab;
     [SerializeField] private GameObject _exposionVFX;
 
+    [SerializeField] private Transform _aircraft;
+
     [SerializeField] private AircraftType _aircraftTyoe;
 
     [Header("Events")]
@@ -57,7 +59,7 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
     {
         _rotationTimer += Time.deltaTime;
 
-        transform.rotation = Quaternion.Slerp(_currentRotation, _targetRotation, _rotationTimer / _rotationTime);
+        _aircraft.rotation = Quaternion.Slerp(_currentRotation, _targetRotation, _rotationTimer / _rotationTime);
 
         if (_rotationTimer >= _rotationTime)
         {
@@ -68,7 +70,7 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
 
     private void SetDamageRotation()
     {
-        _currentRotation = transform.rotation;
+        _currentRotation = _aircraft.rotation;
         _targetRotation = Quaternion.Euler(0f, UnityEngine.Random.Range(60, 120f), UnityEngine.Random.Range(-35f, 35f));
     }
 

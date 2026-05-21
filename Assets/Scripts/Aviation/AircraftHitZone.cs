@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AircraftHitZone : MonoBehaviour
 {
-    [SerializeField] private MonoBehaviour _damageableBehaviour;
+    [SerializeField] private AircraftCollisionManager _aircraftCollisionManager;
 
     [SerializeField] private AircraftHitZoneType _aircraftHitZoneType;
 
@@ -14,7 +14,7 @@ public class AircraftHitZone : MonoBehaviour
 
     private void Start()
     {
-        if (_damageableBehaviour is IDamageable damageable)
+        if (_aircraftCollisionManager is IDamageable damageable)
         {
             _damageable = damageable;
         }
