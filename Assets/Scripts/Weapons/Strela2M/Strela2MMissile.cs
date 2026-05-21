@@ -70,21 +70,11 @@ public class Strela2MMissile : MonoBehaviour
     {
         if (!_isAirborne) return;
 
-        AircraftHitZone aircraftHitZone = collision.gameObject.GetComponent<AircraftHitZone>();
+        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
 
-        if (aircraftHitZone != null)
+        if (damageable != null)
         {
-            IDamageable damageable = aircraftHitZone.GetDamageable;
-
-            Debug.Log(collision.gameObject);
-
-            if (damageable != null)
-            {
-                if (aircraftHitZone.HitZoneType == AircraftHitZoneType.SweetSpot)
-                    damageable.ReceiveCriticalDamage();
-                else
-                    damageable.ReceiveDamage();
-            }
+            damageable.ReceiveCriticalDamage();
         }
 
         Destroy(gameObject);
@@ -95,7 +85,6 @@ public class Strela2MMissile : MonoBehaviour
         transform.parent = null;
         _isAirborne = true;
         _rb.isKinematic = false;
-        _rb.useGravity = true;
 
         _target = _seeker.CurrentTarget;
         _targetType = _seeker.CurrentTargetType;
