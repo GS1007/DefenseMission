@@ -74,7 +74,25 @@ public class Strela2MMissile : MonoBehaviour
 
         if (damageable != null)
         {
-            damageable.ReceiveCriticalDamage();
+            Vector3 hitPoint = collision.contacts[0].point;
+            Vector3 targetCenter = collision.transform.position;
+
+            float distance = Vector3.Distance(hitPoint, targetCenter);
+            float lethalRadius = Random.Range(2.5f, 5f);
+
+            if (distance <= lethalRadius)
+            {
+                damageable.ReceiveCriticalDamage();
+            }
+            else
+            {
+                damageable.ReceiveDamage();
+            }
+
+            Debug.Log($"Hit Point: {hitPoint}");
+            Debug.Log($"Target Position: {targetCenter}");
+            Debug.Log($"Lethal Radius: {lethalRadius}");
+            Debug.Log($"Hit Distance: {distance}");
         }
 
         Destroy(gameObject);

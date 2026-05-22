@@ -11,14 +11,13 @@ public class Strela2MLauncher : MonoBehaviour
 
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
-    [SerializeField] private Transform _scanPoint;
-    [SerializeField] private Transform _tempMI24;
 
     [SerializeField] private LayerMask _aircraftLayer;
 
     [SerializeField] private Strela2MMissile _missilePrefab;
 
     [SerializeField] private float _lauchModeSetupTime = 0f;
+    [SerializeField] private float _angleSetupFOV = 0f;
 
     private bool _triggerIsHeld = false;
 
@@ -51,6 +50,8 @@ public class Strela2MLauncher : MonoBehaviour
         }
 
         LoadedMissile.Seeker.DoUpdate();
+
+        Debug.Log(CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget));
     }
 
     private void OnDisable()
@@ -141,5 +142,14 @@ public class Strela2MLauncher : MonoBehaviour
     {
         State = LauncherState.Off;
         _triggerIsHeld = false;
+    }
+
+    private float CalculateAngleSetup(Transform target)
+    {
+        Vector3 direction = (target.position - _angleSetupPoint.position).normalized;
+
+        float angle = Vector3.Angle(_angleSetupPoint.forward, direction);
+
+        return angle;
     }
 }
