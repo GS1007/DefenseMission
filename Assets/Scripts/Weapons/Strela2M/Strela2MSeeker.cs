@@ -170,6 +170,8 @@ public class Strela2MSeeker : MonoBehaviour
         CurrentTarget = bestTarget;
         SignalStrength = highestSignal;
         CurrentTargetType = detectedType;
+
+        Debug.Log(HasLock);
     }
 
     private float CalculateThermalSignature(GameObject contact, Vector3 dirToTarget, float angle)

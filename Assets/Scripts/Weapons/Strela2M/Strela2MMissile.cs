@@ -17,10 +17,14 @@ public class Strela2MMissile : MonoBehaviour
 
     private bool _isAirborne = false;
     private bool _motorIgnited = false;
+    private bool _isCriticalHit = false;
+
     private float _guidanceStartTime;
+
     private Vector3 _lastLosVector;
 
     private Transform _target;
+
     private TargetType _targetType;
 
     public Strela2MSeeker Seeker => _seeker;
@@ -74,13 +78,7 @@ public class Strela2MMissile : MonoBehaviour
 
         if (damageable != null)
         {
-            Vector3 hitPoint = collision.contacts[0].point;
-            Vector3 targetCenter = collision.transform.position;
-
-            float distance = Vector3.Distance(hitPoint, targetCenter);
-            float lethalRadius = Random.Range(2.5f, 5f);
-
-            if (distance <= lethalRadius)
+            if(_isCriticalHit == true)
             {
                 damageable.ReceiveCriticalDamage();
             }
@@ -88,17 +86,13 @@ public class Strela2MMissile : MonoBehaviour
             {
                 damageable.ReceiveDamage();
             }
-
-            Debug.Log($"Hit Point: {hitPoint}");
-            Debug.Log($"Target Position: {targetCenter}");
-            Debug.Log($"Lethal Radius: {lethalRadius}");
-            Debug.Log($"Hit Distance: {distance}");
         }
+
 
         Destroy(gameObject);
     }
 
-    public void Launch()
+    public void Launch(bool isCriticalHit)
     {
         transform.parent = null;
         _isAirborne = true;
@@ -106,6 +100,7 @@ public class Strela2MMissile : MonoBehaviour
 
         _target = _seeker.CurrentTarget;
         _targetType = _seeker.CurrentTargetType;
+        _isCriticalHit = isCriticalHit;
 
         if (_target != null)
             _lastLosVector = (_target.position - transform.position).normalized;

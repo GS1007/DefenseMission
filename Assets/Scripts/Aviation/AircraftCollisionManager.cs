@@ -10,6 +10,8 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
     [SerializeField] private GameObject _exposionVFX;
 
     [SerializeField] private Transform _aircraft;
+    [SerializeField] private Transform _criticalPoint;
+    [SerializeField] private Transform _partialPoint;
 
     [SerializeField] private AircraftType _aircraftTyoe;
 
@@ -53,6 +55,16 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
         Instantiate(_damagedAircraftPrefab, transform.position, transform.rotation);
 
         Destroy(gameObject);
+    }
+
+    public Transform GetPartialPoint()
+    {
+        return _partialPoint;
+    }
+
+    public Transform GetCriticalPoint()
+    {
+        return _criticalPoint;
     }
 
     private void HandlePartialDamage()

@@ -50,8 +50,6 @@ public class Strela2MLauncher : MonoBehaviour
         }
 
         LoadedMissile.Seeker.DoUpdate();
-
-        Debug.Log(CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget));
     }
 
     private void OnDisable()
@@ -121,7 +119,10 @@ public class Strela2MLauncher : MonoBehaviour
             return;
         }
 
-        LoadedMissile.Launch();
+        Debug.Log(CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget));
+        bool isCriticalHit = CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget) <= _angleSetupFOV;
+
+        LoadedMissile.Launch(isCriticalHit);
         LoadedMissile = null;
         State = LauncherState.Off;
         _triggerIsHeld = false;

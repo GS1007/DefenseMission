@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
   _lockRange: 4000
   _minEngagementRange: 500
-  _seekerFOV: 3.5
+  _seekerFOV: 1.5
   _aircraftLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -57,12 +57,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _lockDuration: 3
-  _maxSlewRate: 60
-  _seekerTrackRate: 11
+  _maxSlewRate: 30
+  _seekerTrackRate: 8
   _flareHeatMultiplier: 3
-  _gimbalLimit: 40
+  _gimbalLimit: 30
   _flareTrackDecayRate: 1.5
-  _signalLockThreshold: 0.1
+  _signalLockThreshold: 0.25
   _sunThermalSignature: 5
 --- !u!1 &6313387835446921533
 GameObject:
@@ -221,9 +221,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MMissile
   _rb: {fileID: 5504095074594868413}
   _seeker: {fileID: 4909095420357039862}
-  _ejectionForce: 15
+  _ejectionForce: 30
   _sustainerDelay: 0.4
-  _sustainerThrust: 45
+  _sustainerThrust: 60
   _maxSpeed: 430
   _navigationConstant: 4
   _selfDestructTime: 14
