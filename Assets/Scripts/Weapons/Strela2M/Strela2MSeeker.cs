@@ -52,16 +52,6 @@ public class Strela2MSeeker : MonoBehaviour
 
         ScanForTargets();
 
-        //if (CurrentTarget == null && SignalStrength <= _signalLockThreshold)
-        //{
-        //    _isUncaged = false;
-        //}
-
-        //if (SignalStrength > _signalLockThreshold && CurrentTarget != null)
-        //{
-        //    _isUncaged = true;
-        //}
-
         if (_isUncaged && CurrentTarget != null)
         {
             Vector3 dirToTarget = (CurrentTarget.position - transform.position).normalized;
@@ -147,7 +137,13 @@ public class Strela2MSeeker : MonoBehaviour
 
             if (angle > _seekerFOV / 2f) continue;
 
-            if (Physics.Linecast(transform.position, col.transform.position, _occlusionLayers) || Physics.Linecast(col.transform.position, col.transform.position + (_cloudTrackingDistance * Vector3.forward), _occlusionLayers))
+            // if (Physics.Linecast(transform.position, col.transform.position, _occlusionLayers) || Physics.Linecast(col.transform.position, col.transform.position + (_cloudTrackingDistance * Vector3.forward), _occlusionLayers))
+            // {
+            //     Debug.Log("Cloud on the way");
+            //     continue;
+            // }
+
+            if (Physics.Raycast(transform.position, transform.forward, _lockRange, _occlusionLayers))
             {
                 Debug.Log("Cloud on the way");
                 continue;
