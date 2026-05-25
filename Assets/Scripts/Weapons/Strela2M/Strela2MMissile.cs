@@ -24,7 +24,6 @@ public class Strela2MMissile : MonoBehaviour
     private Vector3 _lastLosVector;
 
     private Transform _target;
-
     private TargetType _targetType;
 
     public Strela2MSeeker Seeker => _seeker;
@@ -49,6 +48,7 @@ public class Strela2MMissile : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
 
             ApplyThrust();
+
             return;
         }
 
@@ -65,9 +65,6 @@ public class Strela2MMissile : MonoBehaviour
         }
 
         ApplyThrust();
-
-        if (_rb.linearVelocity.magnitude > _maxSpeed)
-            _rb.linearVelocity = _rb.linearVelocity.normalized * _maxSpeed;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -78,25 +75,29 @@ public class Strela2MMissile : MonoBehaviour
 
         if (damageable != null)
         {
-            if(_isCriticalHit == true)
-            {
+            if (_isCriticalHit)
                 damageable.ReceiveCriticalDamage();
-            }
             else
-            {
                 damageable.ReceiveDamage();
-            }
         }
-
 
         Destroy(gameObject);
     }
 
     public void Launch(bool isCriticalHit)
     {
+        Vector3 inheritedVelocity = Vector3.zero;
+
+        if (transform.parent != null)
+        {
+            Rigidbody parentRb = transform.parent.GetComponentInParent<Rigidbody>();
+            if (parentRb != null) inheritedVelocity = parentRb.linearVelocity;
+        }
+
         transform.parent = null;
         _isAirborne = true;
         _rb.isKinematic = false;
+        _rb.linearVelocity = inheritedVelocity;
 
         _target = _seeker.CurrentTarget;
         _targetType = _seeker.CurrentTargetType;
@@ -140,6 +141,9 @@ public class Strela2MMissile : MonoBehaviour
     {
         if (_rb.linearVelocity.magnitude < _maxSpeed)
             _rb.AddForce(transform.forward * _sustainerThrust, ForceMode.Acceleration);
+
+        if (_rb.linearVelocity.magnitude > _maxSpeed)
+            _rb.linearVelocity = _rb.linearVelocity.normalized * _maxSpeed;
     }
 
     private IEnumerator IgniteSustainer(float delay)

@@ -15,23 +15,20 @@ public class Strela2MAudioController : MonoBehaviour
     [SerializeField] private AudioClip _targetDetectSound;
 
     [Header("Seeker Audio Settings")]
-    [SerializeField] private float _baseVolume = 0f;
-    [SerializeField] private float _maxVolume = 0f;
+
+    [SerializeField] private float _baseVolume = 0.1f;
+    [SerializeField] private float _maxVolume = 1.0f;
 
     private AudioClip _currentClip;
-
     private Strela2MSeeker _seeker;
+
+    private bool _fireSoundPlaying;
 
     private void OnEnable()
     {
         Strela2MLauncher.MissileLoaded += OnMissileLoad;
         Strela2MLauncher.Fired += OnFire;
         Strela2MBattery.BatteryDied += ResetAudio;
-    }
-
-    private void Update()
-    {
-        UpdateSeekerTone();
     }
 
     private void OnDisable()
@@ -41,9 +38,20 @@ public class Strela2MAudioController : MonoBehaviour
         Strela2MBattery.BatteryDied -= ResetAudio;
     }
 
+    private void Update()
+    {
+        UpdateSeekerTone();
+    }
+
     private void UpdateSeekerTone()
     {
-        if (_launcher.State != LauncherState.Ready || _launcher.LoadedMissile == null)
+        if (_fireSoundPlaying)
+        {
+            if (!_seekerSource.isPlaying) _fireSoundPlaying = false;
+            return;
+        }
+
+        if (_launcher.State != LauncherState.Ready || _launcher.LoadedMissile == null || _seeker == null)
         {
             return;
         }
@@ -56,9 +64,9 @@ public class Strela2MAudioController : MonoBehaviour
 
         if (signal > 0)
         {
-            _seekerSource.volume = Mathf.Lerp(_baseVolume, _maxVolume, progress + 0.2f);
+            _seekerSource.volume = Mathf.Lerp(_baseVolume, _maxVolume, Mathf.Clamp01(progress + 0.2f));
 
-            if (isLocked == true)
+            if (isLocked)
             {
                 SetAudioClip(_lockSound);
             }
@@ -77,22 +85,25 @@ public class Strela2MAudioController : MonoBehaviour
     private void OnMissileLoad(Strela2MMissile missile)
     {
         _seeker = missile.Seeker;
+        _seekerSource.volume = _baseVolume;
     }
 
     private void OnFire()
     {
+        _seeker = null;
+        _fireSoundPlaying = true;
+
         _seekerSource.volume = _maxVolume;
-
         SetAudioClip(_fireSound);
-
-        Debug.Log("Fired");
     }
 
     private void ResetAudio()
     {
         _seekerSource.Stop();
-
         _seekerSource.volume = _baseVolume;
+        _fireSoundPlaying = false;
+        _currentClip = null;
+        _seeker = null;
     }
 
     private void SetAudioClip(AudioClip audioClip)

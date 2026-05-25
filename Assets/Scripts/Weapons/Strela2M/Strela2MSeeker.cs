@@ -3,23 +3,23 @@ using UnityEngine;
 public class Strela2MSeeker : MonoBehaviour
 {
     [Header("Detection Settings")]
-    [SerializeField] private float _lockRange = 4000f;
+    [SerializeField] private float _lockRange = 4200;
     [SerializeField] private float _minEngagementRange = 500f;
-    [SerializeField] private float _seekerFOV = 3.5f;
+    [SerializeField] private float _seekerFOV = 2.0f;
     [SerializeField] private LayerMask _aircraftLayer;
     [SerializeField] private LayerMask _flareLayer;
     [SerializeField] private LayerMask _occlusionLayers;
 
     [Header("Design Spec Limits")]
-    [SerializeField] private float _lockDuration = 1.2f;
+    [SerializeField] private float _lockDuration = 1.8f;
     [SerializeField] private float _maxSlewRate = 60f;
     [SerializeField] private float _seekerTrackRate = 11f;
 
     [Header("Thermal & Countermeasures")]
-    [SerializeField] private float _flareHeatMultiplier = 3.0f;
-    [SerializeField] private float _gimbalLimit = 40f;
-    [SerializeField] private float _flareTrackDecayRate = 1.5f;
-    [SerializeField] private float _signalLockThreshold = 0.15f;
+    [SerializeField] private float _gimbalLimit = 25f;
+    [SerializeField] private float _flareHeatMultiplier = 5.0f;
+    [SerializeField] private float _flareTrackDecayRate = 0.6f;
+    [SerializeField] private float _signalLockThreshold = 0.2f;
     [SerializeField] private float _sunThermalSignature = 5.0f;
 
     private float _currentLockTime;
@@ -52,6 +52,11 @@ public class Strela2MSeeker : MonoBehaviour
 
         ScanForTargets();
 
+        if (CurrentTarget == null && SignalStrength <= _signalLockThreshold)
+        {
+            _isUncaged = false;
+        }
+
         if (SignalStrength > _signalLockThreshold && CurrentTarget != null)
         {
             _isUncaged = true;
@@ -69,13 +74,13 @@ public class Strela2MSeeker : MonoBehaviour
             if (Vector3.Angle(transform.forward, _seekerWorldForward) > _gimbalLimit)
             {
                 ResetSeeker();
-
                 return;
             }
         }
         else
         {
-            _seekerWorldForward = transform.forward;
+            if (!HasLock && !_isUncaged)
+                _seekerWorldForward = transform.forward;
 
             if (turnRatePerSecond > _maxSlewRate)
             {
@@ -89,12 +94,15 @@ public class Strela2MSeeker : MonoBehaviour
             case TargetType.Aircraft:
                 _currentLockTime += (SignalStrength > _signalLockThreshold) ? Time.deltaTime : -Time.deltaTime;
                 ProcessLockWindow();
+
+                if (!HasLock && _currentLockTime <= 0f) ResetSeeker();
                 break;
 
             case TargetType.Sun:
                 _currentLockTime += Time.deltaTime * 2.0f;
                 ProcessLockWindow();
                 break;
+
             case TargetType.Flare:
                 if (!HasLock)
                 {
@@ -109,8 +117,14 @@ public class Strela2MSeeker : MonoBehaviour
                 break;
 
             default:
-                _currentLockTime = Mathf.Max(0f, _currentLockTime - Time.deltaTime);
-                if (_currentLockTime <= 0f && HasLock) ResetSeeker();
+                if (HasLock == true)
+                {
+                    ResetSeeker();
+                }
+                else
+                {
+                    _currentLockTime = Mathf.Max(0f, _currentLockTime - Time.deltaTime);
+                }
                 break;
         }
     }
@@ -128,7 +142,7 @@ public class Strela2MSeeker : MonoBehaviour
         {
             float dist = Vector3.Distance(transform.position, col.transform.position);
 
-            // if (dist < _minEngagementRange) continue;
+            if (dist < _minEngagementRange) continue;
 
             Vector3 dirToTarget = (col.transform.position - transform.position).normalized;
             float angle = Vector3.Angle(_seekerWorldForward, dirToTarget);
@@ -170,8 +184,6 @@ public class Strela2MSeeker : MonoBehaviour
         CurrentTarget = bestTarget;
         SignalStrength = highestSignal;
         CurrentTargetType = detectedType;
-
-        Debug.Log(HasLock);
     }
 
     private float CalculateThermalSignature(GameObject contact, Vector3 dirToTarget, float angle)
@@ -208,6 +220,9 @@ public class Strela2MSeeker : MonoBehaviour
     private void ProcessLockWindow()
     {
         _currentLockTime = Mathf.Clamp(_currentLockTime, 0f, _lockDuration);
+
         if (!HasLock && _currentLockTime >= _lockDuration) HasLock = true;
+
+        if (HasLock && _currentLockTime <= 0f) HasLock = false;
     }
 }
