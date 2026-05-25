@@ -5,7 +5,7 @@ public class Strela2MSeeker : MonoBehaviour
     [Header("Detection Settings")]
     [SerializeField] private float _lockRange = 4200;
     [SerializeField] private float _seekerFOV = 2.0f;
-    [SerializeField] private float _cloudTrackingDistance = 50f;
+
     [SerializeField] private LayerMask _aircraftLayer;
     [SerializeField] private LayerMask _flareLayer;
     [SerializeField] private LayerMask _occlusionLayers;
@@ -137,15 +137,8 @@ public class Strela2MSeeker : MonoBehaviour
 
             if (angle > _seekerFOV / 2f) continue;
 
-            // if (Physics.Linecast(transform.position, col.transform.position, _occlusionLayers) || Physics.Linecast(col.transform.position, col.transform.position + (_cloudTrackingDistance * Vector3.forward), _occlusionLayers))
-            // {
-            //     Debug.Log("Cloud on the way");
-            //     continue;
-            // }
-
             if (Physics.Raycast(transform.position, transform.forward, _lockRange, _occlusionLayers))
             {
-                Debug.Log("Cloud on the way");
                 continue;
             }
 
@@ -167,7 +160,9 @@ public class Strela2MSeeker : MonoBehaviour
             Vector3 dirToSun = (_sunTransform.position - transform.position).normalized;
             float sunAngle = Vector3.Angle(_seekerWorldForward, dirToSun);
 
-            if (sunAngle <= _seekerFOV / 2f)
+            Debug.Log($"Sun Angle: {sunAngle}");
+
+            if (sunAngle <= 30f)
             {
                 float sunSignal = (1f - (sunAngle / (_seekerFOV / 2f))) * _sunThermalSignature;
 
