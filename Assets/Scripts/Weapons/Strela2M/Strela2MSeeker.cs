@@ -4,7 +4,6 @@ public class Strela2MSeeker : MonoBehaviour
 {
     [Header("Detection Settings")]
     [SerializeField] private float _lockRange = 4200;
-    [SerializeField] private float _minEngagementRange = 500f;
     [SerializeField] private float _seekerFOV = 2.0f;
     [SerializeField] private LayerMask _aircraftLayer;
     [SerializeField] private LayerMask _flareLayer;
@@ -52,15 +51,15 @@ public class Strela2MSeeker : MonoBehaviour
 
         ScanForTargets();
 
-        if (CurrentTarget == null && SignalStrength <= _signalLockThreshold)
-        {
-            _isUncaged = false;
-        }
+        //if (CurrentTarget == null && SignalStrength <= _signalLockThreshold)
+        //{
+        //    _isUncaged = false;
+        //}
 
-        if (SignalStrength > _signalLockThreshold && CurrentTarget != null)
-        {
-            _isUncaged = true;
-        }
+        //if (SignalStrength > _signalLockThreshold && CurrentTarget != null)
+        //{
+        //    _isUncaged = true;
+        //}
 
         if (_isUncaged && CurrentTarget != null)
         {
@@ -142,8 +141,6 @@ public class Strela2MSeeker : MonoBehaviour
         {
             float dist = Vector3.Distance(transform.position, col.transform.position);
 
-            if (dist < _minEngagementRange) continue;
-
             Vector3 dirToTarget = (col.transform.position - transform.position).normalized;
             float angle = Vector3.Angle(_seekerWorldForward, dirToTarget);
 
@@ -221,7 +218,11 @@ public class Strela2MSeeker : MonoBehaviour
     {
         _currentLockTime = Mathf.Clamp(_currentLockTime, 0f, _lockDuration);
 
-        if (!HasLock && _currentLockTime >= _lockDuration) HasLock = true;
+        if (!HasLock && _currentLockTime >= _lockDuration) 
+        { 
+          _isUncaged = true; 
+          HasLock = true; 
+        }
 
         if (HasLock && _currentLockTime <= 0f) HasLock = false;
     }
