@@ -5,6 +5,7 @@ public class Strela2MSeeker : MonoBehaviour
     [Header("Detection Settings")]
     [SerializeField] private float _lockRange = 4200;
     [SerializeField] private float _seekerFOV = 2.0f;
+    [SerializeField] private float _cloudTrackingDistance = 50f;
     [SerializeField] private LayerMask _aircraftLayer;
     [SerializeField] private LayerMask _flareLayer;
     [SerializeField] private LayerMask _occlusionLayers;
@@ -145,7 +146,12 @@ public class Strela2MSeeker : MonoBehaviour
             float angle = Vector3.Angle(_seekerWorldForward, dirToTarget);
 
             if (angle > _seekerFOV / 2f) continue;
-            if (Physics.Linecast(transform.position, col.transform.position, _occlusionLayers)) continue;
+
+            if (Physics.Linecast(transform.position, col.transform.position, _occlusionLayers) || Physics.Linecast(col.transform.position, col.transform.position + (_cloudTrackingDistance * Vector3.forward), _occlusionLayers))
+            {
+                Debug.Log("Cloud on the way");
+                continue;
+            }
 
             float targetSignal = CalculateThermalSignature(col.gameObject, dirToTarget, angle);
             targetSignal *= Mathf.Clamp01(1f - (dist / _lockRange));
@@ -218,10 +224,10 @@ public class Strela2MSeeker : MonoBehaviour
     {
         _currentLockTime = Mathf.Clamp(_currentLockTime, 0f, _lockDuration);
 
-        if (!HasLock && _currentLockTime >= _lockDuration) 
-        { 
-          _isUncaged = true; 
-          HasLock = true; 
+        if (!HasLock && _currentLockTime >= _lockDuration)
+        {
+            _isUncaged = true;
+            HasLock = true;
         }
 
         if (HasLock && _currentLockTime <= 0f) HasLock = false;

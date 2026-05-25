@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
   _lockRange: 4200
-  _minEngagementRange: 500
   _seekerFOV: 2
+  _cloudTrackingDistance: 2800
   _aircraftLayer:
     serializedVersion: 2
     m_Bits: 64
