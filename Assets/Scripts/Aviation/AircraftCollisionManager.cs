@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTarget
 {
-    public static event Action<bool> DamagedReceived;
+    public static event Action<IAircraftTarget, bool> DamagedReceived;
 
     [SerializeField] private GameObject _damagedAircraftPrefab;
     [SerializeField] private GameObject _exposionVFX;
@@ -43,28 +43,18 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
     public void ReceiveDamage()
     {
         _partiallyDamaged = true;
-        DamagedReceived?.Invoke(false);
+        DamagedReceived?.Invoke(this, false);
         Instantiate(_exposionVFX, transform);
     }
 
     public void ReceiveCriticalDamage()
     {
         OnDamageReceive?.Invoke();
-        DamagedReceived?.Invoke(true);
+        DamagedReceived?.Invoke(this, true);
 
         Instantiate(_damagedAircraftPrefab, transform.position, transform.rotation);
 
         Destroy(gameObject);
-    }
-
-    public Transform GetPartialPoint()
-    {
-        return _partialPoint;
-    }
-
-    public Transform GetCriticalPoint()
-    {
-        return _criticalPoint;
     }
 
     private void HandlePartialDamage()

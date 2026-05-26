@@ -67,16 +67,17 @@ public class FireReportUI : MonoBehaviour
         _aircraftImage.sprite = _fireResultDatas[_resultDataIndex].TargetSprite;
     }
 
-    private void AddFireResultData(bool isDamageCritical)
+    private void AddFireResultData(IAircraftTarget target, bool isDamageCritical)
     {
+        AircraftType _aircraftType = target.GetAircraftType();
+
         _fireResultDatas.Add(new FireResultData()
         {
-            TargetObjectName = _instructorPanel.CurrentTargetName,
-            TargetSprite = _instructorPanel.TypeOfAircraft == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
-            TypeOfAircraft = _instructorPanel.TypeOfAircraft,
+            TargetObjectName = _aircraftType.ToString(),
+            TargetSprite = _aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
             AngleSettings = _instructorPanel.AngleSettings,
             LaunchMode = _instructorPanel.MissileLaunchMode,
-            HitPoint = _instructorPanel.TypeOfAircraft == AircraftType.MI24 ?
+            HitPoint = _aircraftType == AircraftType.MI24 ?
             (isDamageCritical ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f)) : (isDamageCritical ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f))
         });
     }

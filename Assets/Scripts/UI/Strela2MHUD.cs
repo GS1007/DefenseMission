@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Strela2MHUD : MonoBehaviour
 {
@@ -18,7 +17,6 @@ public class Strela2MHUD : MonoBehaviour
     public string CurrentTargetName { get; private set; }
     public string MissileLaunchMode { get; private set; }
     public float AngleSettings { get { return Mathf.DeltaAngle(0, _strela2M.eulerAngles.z); } }
-    public AircraftType TypeOfAircraft { get { return _seeker.CurrentTarget.GetComponent<IAircraftTarget>().GetAircraftType(); } }
 
     private void OnEnable()
     {

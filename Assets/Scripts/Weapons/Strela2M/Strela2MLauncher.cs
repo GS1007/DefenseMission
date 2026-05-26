@@ -55,7 +55,7 @@ public class Strela2MLauncher : MonoBehaviour
 
         LoadedMissile.Seeker.DoUpdate();
 
-        if(_triggerIsHeld == true)
+        if (_triggerIsHeld == true)
         {
             if (_launchMode == LaunchMode.Manual)
             {
@@ -112,11 +112,11 @@ public class Strela2MLauncher : MonoBehaviour
             return;
         }
 
-        if(_modeCheckingStarted == false)
+        if (_modeCheckingStarted == false)
         {
             StartCoroutine(SetLaunchMode());
             _modeCheckingStarted = true;
-        } 
+        }
     }
 
     private void OnTroggerPullingEnd()
@@ -160,16 +160,10 @@ public class Strela2MLauncher : MonoBehaviour
     {
         yield return _automaticLaunchDelay;
 
-        if(LoadedMissile.Seeker.HasLock == true)
+        if (LoadedMissile.Seeker.HasLock == true)
         {
             Fire();
         }
-    }
-
-    private void OnBatteryDeath()
-    {
-        State = LauncherState.Off;
-        _triggerIsHeld = false;
     }
 
     private float CalculateAngleSetup(Transform target)
@@ -179,5 +173,11 @@ public class Strela2MLauncher : MonoBehaviour
         float angle = Vector3.Angle(_angleSetupPoint.forward, direction);
 
         return angle;
+    }
+
+    private void OnBatteryDeath()
+    {
+        State = LauncherState.Off;
+        _triggerIsHeld = false;
     }
 }
