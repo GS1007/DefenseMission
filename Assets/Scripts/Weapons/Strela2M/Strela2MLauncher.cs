@@ -142,8 +142,6 @@ public class Strela2MLauncher : MonoBehaviour
         _triggerIsHeld = false;
         _modeCheckingStarted = false;
 
-        Debug.Log($"Critical hit : {isCriticalHit}");
-
         Fired?.Invoke();
     }
 
@@ -171,6 +169,8 @@ public class Strela2MLauncher : MonoBehaviour
         Vector3 direction = (target.position - _angleSetupPoint.position).normalized;
 
         float angle = Vector3.Angle(_angleSetupPoint.forward, direction);
+
+        Debug.Log(angle);
 
         return angle;
     }
