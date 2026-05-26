@@ -18,12 +18,15 @@ public class Strela2MLauncher : MonoBehaviour
 
     [SerializeField] private float _lauchModeSetupTime = 0f;
     [SerializeField] private float _angleSetupFOV = 0f;
+    [SerializeField] private float _automaticLaunchTime = 0f;
 
+    private bool _modeCheckingStarted = false;
     private bool _triggerIsHeld = false;
 
     private LaunchMode _launchMode = LaunchMode.Automatic;
 
     private WaitForSeconds _launchModeSetupDelay;
+    private WaitForSeconds _automaticLaunchDelay;
 
     public LauncherState State { get; set; } = LauncherState.Off;
     public Strela2MMissile LoadedMissile { get; private set; }
@@ -40,6 +43,7 @@ public class Strela2MLauncher : MonoBehaviour
     private void Start()
     {
         _launchModeSetupDelay = new WaitForSeconds(_lauchModeSetupTime);
+        _automaticLaunchDelay = new WaitForSeconds(_automaticLaunchTime);
     }
 
     private void Update()
@@ -51,9 +55,17 @@ public class Strela2MLauncher : MonoBehaviour
 
         LoadedMissile.Seeker.DoUpdate();
 
-        if (_triggerIsHeld == true && (_launchMode == LaunchMode.Manual || (_launchMode == LaunchMode.Automatic && LoadedMissile.Seeker.HasLock == true)))
+        if(_triggerIsHeld == true)
         {
-            Fire();
+            if (_launchMode == LaunchMode.Manual)
+            {
+                Fire();
+            }
+            else
+            {
+                _triggerIsHeld = false;
+                StartCoroutine(LaunchAutomaticMode());
+            }
         }
     }
 
@@ -100,7 +112,11 @@ public class Strela2MLauncher : MonoBehaviour
             return;
         }
 
-        StartCoroutine(SetLaunchMode());
+        if(_modeCheckingStarted == false)
+        {
+            StartCoroutine(SetLaunchMode());
+            _modeCheckingStarted = true;
+        } 
     }
 
     private void OnTroggerPullingEnd()
@@ -111,6 +127,8 @@ public class Strela2MLauncher : MonoBehaviour
         }
 
         _triggerIsHeld = true;
+
+        Debug.Log(_launchMode);
     }
 
     private void Fire()
@@ -122,10 +140,11 @@ public class Strela2MLauncher : MonoBehaviour
         LoadedMissile = null;
         State = LauncherState.Off;
         _triggerIsHeld = false;
+        _modeCheckingStarted = false;
+
+        Debug.Log($"Critical hit : {isCriticalHit}");
 
         Fired?.Invoke();
-
-        Debug.Log(CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget));
     }
 
     private IEnumerator SetLaunchMode()
@@ -135,6 +154,16 @@ public class Strela2MLauncher : MonoBehaviour
         _launchMode = _triggerIsHeld ? LaunchMode.Automatic : LaunchMode.Manual;
 
         LaunchModeSet?.Invoke(_launchMode);
+    }
+
+    private IEnumerator LaunchAutomaticMode()
+    {
+        yield return _automaticLaunchDelay;
+
+        if(LoadedMissile.Seeker.HasLock == true)
+        {
+            Fire();
+        }
     }
 
     private void OnBatteryDeath()

@@ -160,7 +160,7 @@ public class Strela2MSeeker : MonoBehaviour
             Vector3 dirToSun = (_sunTransform.position - transform.position).normalized;
             float sunAngle = Vector3.Angle(_seekerWorldForward, dirToSun);
 
-            Debug.Log($"Sun Angle: {sunAngle}");
+            //Debug.Log($"Sun Angle: {sunAngle}");
 
             if (sunAngle <= 30f)
             {

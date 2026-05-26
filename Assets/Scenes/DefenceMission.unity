@@ -12422,8 +12422,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _missilePrefab: {fileID: 5440741239595406257, guid: 4c6acefb9a435b3438424070d3999636, type: 3}
-  _lauchModeSetupTime: 1
+  _lauchModeSetupTime: 0.5
   _angleSetupFOV: 5
+  _automaticLaunchTime: 1.5
 --- !u!114 &1375182388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19043,8 +19044,8 @@ MonoBehaviour:
   _targetNameText: {fileID: 339605461}
   _angleSettingsText: {fileID: 2022431326}
   _launchModeText: {fileID: 864949039}
-  _mi24Sprite: {fileID: 0}
-  _su25Sprite: {fileID: 0}
+  _mi24Sprite: {fileID: 21300000, guid: 3b6f9765d4ad96049a97cdb3a96cf47c, type: 3}
+  _su25Sprite: {fileID: 21300000, guid: 46da57ce3b5265b41a4df932da147c0c, type: 3}
   _instructorPanel: {fileID: 2086731025}
 --- !u!1 &2102009158
 GameObject:
