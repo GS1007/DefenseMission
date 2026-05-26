@@ -50,6 +50,11 @@ public class Strela2MLauncher : MonoBehaviour
         }
 
         LoadedMissile.Seeker.DoUpdate();
+
+        if (_triggerIsHeld == true && (_launchMode == LaunchMode.Manual || (_launchMode == LaunchMode.Automatic && LoadedMissile.Seeker.HasLock == true)))
+        {
+            Fire();
+        }
     }
 
     private void OnDisable()
@@ -106,20 +111,11 @@ public class Strela2MLauncher : MonoBehaviour
         }
 
         _triggerIsHeld = true;
-
-        Fire();
     }
 
     private void Fire()
     {
         Strela2MSeeker seeker = LoadedMissile.Seeker;
-
-        if (_launchMode == LaunchMode.Automatic && seeker.HasLock == false)
-        {
-            return;
-        }
-
-        Debug.Log(CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget));
         bool isCriticalHit = CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget) <= _angleSetupFOV;
 
         LoadedMissile.Launch(isCriticalHit);
@@ -128,6 +124,8 @@ public class Strela2MLauncher : MonoBehaviour
         _triggerIsHeld = false;
 
         Fired?.Invoke();
+
+        Debug.Log(CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget));
     }
 
     private IEnumerator SetLaunchMode()
