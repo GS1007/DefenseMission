@@ -3,7 +3,17 @@ guid: d18b8b6725178d84aa9210cc95c5072f
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass.003
+    second: {fileID: 2100000, guid: b8b1d4bfa6617524385b40cbb5d81d02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SU-25 Frogfoot.003
+    second: {fileID: 2100000, guid: 62612d5c35af0c14898e7d63199033d3, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

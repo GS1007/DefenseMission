@@ -13,6 +13,7 @@ public class FireReportUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _targetNameText;
     [SerializeField] private TextMeshProUGUI _angleSettingsText;
     [SerializeField] private TextMeshProUGUI _launchModeText;
+    [SerializeField] private TextMeshProUGUI _resultText;
 
     [Header("Aircraft Sprites")]
     [SerializeField] private Sprite _mi24Sprite;
@@ -63,7 +64,8 @@ public class FireReportUI : MonoBehaviour
         _hitPointRect.anchoredPosition = _fireResultDatas[_resultDataIndex].HitPoint;
         _targetNameText.text = $"სამიზნე ობიექტი: {_fireResultDatas[_resultDataIndex].TargetObjectName}";
         _angleSettingsText.text = $"გადახრა: {_fireResultDatas[_resultDataIndex].AngleSettings.ToString()}";
-        _launchModeText.text = $"სროლის რეჟიმი {_fireResultDatas[_resultDataIndex].LaunchMode}";
+        _launchModeText.text = $"სროლის რეჟიმი: {_fireResultDatas[_resultDataIndex].LaunchMode}";
+        _resultText.text = $"შედეგი: {_fireResultDatas[_resultDataIndex].Result}";
         _aircraftImage.sprite = _fireResultDatas[_resultDataIndex].TargetSprite;
     }
 
@@ -75,10 +77,11 @@ public class FireReportUI : MonoBehaviour
         {
             TargetObjectName = _aircraftType.ToString(),
             TargetSprite = _aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
-            AngleSettings = _instructorPanel.AngleSettings,
+            AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
             LaunchMode = _instructorPanel.MissileLaunchMode,
+            Result = isDamageCritical ? "ჩამოვარდა" : "დაზიანდა",
             HitPoint = _aircraftType == AircraftType.MI24 ?
-            (isDamageCritical ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f)) : (isDamageCritical ? new Vector3(Random.Range(0f, 50f), Random.Range(-25f, 25f), 0f) : new Vector3(Random.Range(-90f, -25f), 25f, 0f))
+            (isDamageCritical ? new Vector3(Random.Range(-120, 400f), Random.Range(-20f, 70f), 0f) : new Vector3(Random.Range(-570f, -100), Random.Range(-20f, 70f), 0f)) : (isDamageCritical ? new Vector3(Random.Range(-100f, 300f), Random.Range(-80f, 60f), 0f) : new Vector3(Random.Range(-700, -400), Random.Range(20f, 75f), 0f))
         });
     }
 }

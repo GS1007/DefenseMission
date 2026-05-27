@@ -9,6 +9,7 @@ public class Strela2MLauncher : MonoBehaviour
     public static event Action IllegallyFired;
     public static event Action<LaunchMode> LaunchModeSet;
 
+    [SerializeField] private Transform _strela2M;
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
 
@@ -19,6 +20,7 @@ public class Strela2MLauncher : MonoBehaviour
     [SerializeField] private float _lauchModeSetupTime = 0f;
     [SerializeField] private float _angleSetupFOV = 0f;
     [SerializeField] private float _automaticLaunchTime = 0f;
+    [SerializeField] private float _zRotationLimit = 0f;
 
     private bool _modeCheckingStarted = false;
     private bool _triggerIsHeld = false;
@@ -135,8 +137,9 @@ public class Strela2MLauncher : MonoBehaviour
     {
         Strela2MSeeker seeker = LoadedMissile.Seeker;
         bool isCriticalHit = CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget) <= _angleSetupFOV;
+        float angle = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
 
-        LoadedMissile.Launch(isCriticalHit);
+        LoadedMissile.Launch(isCriticalHit && MathF.Abs(angle) <= _zRotationLimit);
         LoadedMissile = null;
         State = LauncherState.Off;
         _triggerIsHeld = false;

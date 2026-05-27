@@ -74,7 +74,7 @@ public class Strela2MHUD : MonoBehaviour
     {
         float angle = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
 
-        _angleSetupText.text = $"გადახრა: {angle:F1}";
+        _angleSetupText.text = $"გადახრა: {Mathf.Abs(angle):F1}";
     }
 
     private void DisplayLaunchMode(LaunchMode launchMode)
