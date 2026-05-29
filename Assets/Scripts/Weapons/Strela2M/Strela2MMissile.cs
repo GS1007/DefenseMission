@@ -5,6 +5,7 @@ public class Strela2MMissile : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private MeshRenderer _meshRenderer;
     [SerializeField] private Strela2MSeeker _seeker;
 
     [Header("Flight Dynamics")]
@@ -93,6 +94,8 @@ public class Strela2MMissile : MonoBehaviour
             Rigidbody parentRb = transform.parent.GetComponentInParent<Rigidbody>();
             if (parentRb != null) inheritedVelocity = parentRb.linearVelocity;
         }
+
+        _meshRenderer.enabled = true;
 
         transform.parent = null;
         _isAirborne = true;

@@ -46,7 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
   _lockRange: 4200
   _seekerFOV: 2
-  _cloudTrackingDistance: 2800
   _aircraftLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -117,7 +116,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6313387835446921533}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -220,6 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MMissile
   _rb: {fileID: 5504095074594868413}
+  _meshRenderer: {fileID: 7730572820492879274}
   _seeker: {fileID: 4909095420357039862}
   _ejectionForce: 30
   _sustainerDelay: 0.4

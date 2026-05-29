@@ -103,7 +103,6 @@ public class Strela2MAudioController : MonoBehaviour
         _seekerSource.volume = _baseVolume;
         _fireSoundPlaying = false;
         _currentClip = null;
-        _seeker = null;
     }
 
     private void SetAudioClip(AudioClip audioClip)

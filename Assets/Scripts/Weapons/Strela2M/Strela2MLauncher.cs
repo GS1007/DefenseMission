@@ -135,11 +135,9 @@ public class Strela2MLauncher : MonoBehaviour
 
     private void Fire()
     {
-        Strela2MSeeker seeker = LoadedMissile.Seeker;
-        bool isCriticalHit = CalculateAngleSetup(LoadedMissile.Seeker.CurrentTarget) <= _angleSetupFOV;
-        float angle = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
+        bool isCriticalHit = IsWithinTheAngle() && Mathf.Abs(Mathf.DeltaAngle(0, _strela2M.eulerAngles.z)) <= _zRotationLimit;
 
-        LoadedMissile.Launch(isCriticalHit && MathF.Abs(angle) <= _zRotationLimit);
+        LoadedMissile.Launch(isCriticalHit);
         LoadedMissile = null;
         State = LauncherState.Off;
         _triggerIsHeld = false;
@@ -167,15 +165,18 @@ public class Strela2MLauncher : MonoBehaviour
         }
     }
 
-    private float CalculateAngleSetup(Transform target)
+    private bool IsWithinTheAngle()
     {
+        Transform target = LoadedMissile.Seeker.CurrentTarget;
+
+        if (target == null)
+        {
+            return false;
+        }
+
         Vector3 direction = (target.position - _angleSetupPoint.position).normalized;
 
-        float angle = Vector3.Angle(_angleSetupPoint.forward, direction);
-
-        Debug.Log(angle);
-
-        return angle;
+        return Vector3.Angle(_angleSetupPoint.forward, direction) <= _angleSetupFOV;
     }
 
     private void OnBatteryDeath()
