@@ -6,10 +6,8 @@ public class AircraftDestructor : MonoBehaviour
 
     [SerializeField] private Rigidbody[] _parts;
 
-    [SerializeField] private float _explosionForce = 0f;
-    [SerializeField] private float _explosionRadius = 0f;
-    [SerializeField] private float _upwardModifier = 0f;
-
+    [SerializeField] private float _minExplosionForce = 0f;
+    [SerializeField] private float _maxExplosionForce = 0f;
 
     [Header("Crash Components")]
 
@@ -47,8 +45,8 @@ public class AircraftDestructor : MonoBehaviour
         foreach (Rigidbody rb in _parts)
         {
             rb.transform.parent = null;
-            rb.AddExplosionForce(_explosionForce, transform.position, _explosionRadius, _upwardModifier, ForceMode.Impulse);
-            rb.AddTorque(Random.insideUnitSphere * _explosionForce, ForceMode.Impulse);
+            rb.transform.rotation = Quaternion.Euler(Random.Range(-60f, 60f), Random.Range(-60f, 60f), Random.Range(-60f, 60f));
+            rb.AddForce(rb.transform.forward * Random.Range(_minExplosionForce, _maxExplosionForce), ForceMode.Impulse);
         }
     }
 

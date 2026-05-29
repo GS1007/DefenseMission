@@ -17,63 +17,24 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
 
     [Header("Events")]
 
-    [SerializeField] private UnityEvent OnDamageReceive;
+    [SerializeField] private UnityEvent OnCriticalDamageReceive;
+    [SerializeField] private UnityEvent OnPartialDamageReceive;
 
-    private bool _partiallyDamaged = false;
-
-    private float _rotationTimer = 0f;
-    private float _rotationTime = 0.75f;
-
-    private Quaternion _currentRotation;
-    private Quaternion _targetRotation;
-
-    private void Start()
-    {
-        SetDamageRotation();
-    }
-
-    private void Update()
-    {
-        if (_partiallyDamaged == true)
-        {
-            HandlePartialDamage();
-        }
-    }
 
     public void ReceiveDamage()
     {
-        _partiallyDamaged = true;
         DamagedReceived?.Invoke(this, false);
         Instantiate(_exposionVFX, transform);
     }
 
     public void ReceiveCriticalDamage()
     {
-        OnDamageReceive?.Invoke();
+        OnCriticalDamageReceive?.Invoke();
         DamagedReceived?.Invoke(this, true);
 
         Instantiate(_damagedAircraftPrefab, transform.position, transform.rotation);
 
         Destroy(gameObject);
-    }
-
-    private void HandlePartialDamage()
-    {
-        _rotationTimer += Time.deltaTime;
-
-        _aircraft.rotation = Quaternion.Slerp(_currentRotation, _targetRotation, _rotationTimer / _rotationTime);
-
-        if (_rotationTimer >= _rotationTime)
-        {
-            _rotationTimer = 0f;
-            SetDamageRotation();
-        }
-    }
-
-    private void SetDamageRotation()
-    {
-        _currentRotation = _aircraft.rotation;
-        _targetRotation = Quaternion.Euler(0f, UnityEngine.Random.Range(60, 120f), UnityEngine.Random.Range(-35f, 35f));
     }
 
     public AircraftType GetAircraftType()

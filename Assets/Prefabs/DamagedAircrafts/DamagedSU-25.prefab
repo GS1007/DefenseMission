@@ -1150,8 +1150,10 @@ MonoBehaviour:
   - {fileID: 5131744060154518788}
   - {fileID: 5314261924395640445}
   - {fileID: 5002875430725819971}
-  _explosionForce: 5
-  _explosionRadius: 3
+  _minExplosionForce: 15
+  _maxExplosionForce: 30
+  _minExplosionRadius: 10
+  _maxExploionRadius: 30
   _upwardModifier: 1.5
   _aircraft: {fileID: 3785923001721510819}
   _explosionPrefab: {fileID: 5776599307122817694, guid: 9d64b3e04f6f56a4c982786eb5703b06, type: 3}
