@@ -4101,7 +4101,7 @@ MonoBehaviour:
   m_PlayOnAwake: 0
   m_LoopMode: 0
   m_Method: 1
-  m_Duration: 90.52504
+  m_Duration: 135.15028
   m_MaxSpeed: 45
   m_EasingMode: 0
   m_AlignmentMode: 1
@@ -4234,8 +4234,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 342212453}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000015789775, y: 0.9368779, z: 0.0000000058929785, w: 0.34965676}
-  m_LocalPosition: {x: -949, y: 485, z: 1663}
+  m_LocalRotation: {x: 0.000000016016374, y: 0.96074456, z: 0.0000000046250515, w: 0.27743438}
+  m_LocalPosition: {x: -2181, y: 485, z: 2183}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7034,41 +7034,41 @@ MonoBehaviour:
   - m_EditModeType: 1
     m_Knots:
     - Position:
-        x: -1732
+        x: -2964
         y: 300
-        z: 1910
+        z: 2430
       TangentIn:
         x: -0
         y: -0
-        z: -63.800312
+        z: -203.53154
       TangentOut:
         x: 0
         y: 0
-        z: 63.800312
+        z: 203.53154
       Rotation:
         value:
-          x: 0.000000015789784
-          y: 0.9368783
-          z: 0.0000000058929563
-          w: 0.3496554
+          x: 0.000000016016372
+          y: 0.9607447
+          z: 0.0000000046250475
+          w: 0.27743423
     - Position:
-        x: -1314
+        x: -1879
         y: 300
-        z: 1428
+        z: 708
       TangentIn:
         x: -0
         y: -0
-        z: -211.80258
+        z: -466.33386
       TangentOut:
         x: 0
         y: 0
-        z: 222.47409
+        z: 369.11966
       Rotation:
         value:
-          x: 0.005770271
-          y: 0.8939408
-          z: -0.05843988
-          w: 0.44432104
+          x: -0.0039060637
+          y: 0.8141054
+          z: -0.049213473
+          w: 0.57861483
     - Position:
         x: -689
         y: 150
@@ -14237,7 +14237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DevelopmentConsole
   _gameObjectTransform: {fileID: 1715799044}
-  _environment: 2
+  _environment: 0
   _objectTransformSettingsVRHolding: {fileID: 11400000, guid: 7b06f03cf922d1d4db3b8920ba1e78b7, type: 2}
   _objectTransformSettingsVRAiming: {fileID: 11400000, guid: a78ca16a92d0c11439c21b8811fc9121, type: 2}
   _objectTransformSettingsPC: {fileID: 11400000, guid: e4715762ed12b5642ae6041270e6062a, type: 2}
@@ -18986,8 +18986,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1715799043}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.2, z: 0.2}
+  m_LocalRotation: {x: 0.12806949, y: -0.15199547, z: -0.25819844, w: 0.94542545}
+  m_LocalPosition: {x: 0.0027, y: -0.0017, z: -0.1695}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -137,7 +137,7 @@ public class Strela2MLauncher : MonoBehaviour
     {
         bool isCriticalHit = IsWithinTheAngle() && Mathf.Abs(Mathf.DeltaAngle(0, _strela2M.eulerAngles.z)) <= _zRotationLimit;
 
-        LoadedMissile.Launch(true);///Nee to change back to isCriticalHit
+        LoadedMissile.Launch(isCriticalHit);
         LoadedMissile = null;
         State = LauncherState.Off;
         _triggerIsHeld = false;
