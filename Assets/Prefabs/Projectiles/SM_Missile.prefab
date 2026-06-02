@@ -46,12 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
   _lockRange: 4200
   _seekerFOV: 2
+  _cloudAngle: 40
+  _sunAngle: 25
   _aircraftLayer:
     serializedVersion: 2
     m_Bits: 64
-  _flareLayer:
-    serializedVersion: 2
-    m_Bits: 256
   _occlusionLayers:
     serializedVersion: 2
     m_Bits: 128
@@ -59,8 +58,6 @@ MonoBehaviour:
   _maxSlewRate: 60
   _seekerTrackRate: 11
   _gimbalLimit: 25
-  _flareHeatMultiplier: 5
-  _flareTrackDecayRate: 0.6
   _signalLockThreshold: 0.2
   _sunThermalSignature: 5
 --- !u!1 &6313387835446921533

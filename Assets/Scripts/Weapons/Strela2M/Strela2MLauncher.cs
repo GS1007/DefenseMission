@@ -33,6 +33,8 @@ public class Strela2MLauncher : MonoBehaviour
     public LauncherState State { get; set; } = LauncherState.Off;
     public Strela2MMissile LoadedMissile { get; private set; }
 
+    private Strela2MSeeker _seeker;
+
     private void OnEnable()
     {
         Strela2MBattery.PowerUpStarted += OnBatteryPowerupStart;
@@ -55,7 +57,7 @@ public class Strela2MLauncher : MonoBehaviour
             return;
         }
 
-        LoadedMissile.Seeker.DoUpdate();
+        _seeker.DoUpdate();
 
         if (_triggerIsHeld == true)
         {
@@ -83,6 +85,7 @@ public class Strela2MLauncher : MonoBehaviour
     private void LoadMissile()
     {
         LoadedMissile = Instantiate(_missilePrefab, _missileSpawnPoint);
+        _seeker = LoadedMissile.Seeker;
         MissileLoaded?.Invoke(LoadedMissile);
     }
 
@@ -95,7 +98,6 @@ public class Strela2MLauncher : MonoBehaviour
     {
         if (State != LauncherState.DeadBattery)
         {
-
             if (LoadedMissile == null)
             {
                 LoadMissile();
@@ -137,6 +139,11 @@ public class Strela2MLauncher : MonoBehaviour
     {
         bool isCriticalHit = IsWithinTheAngle() && Mathf.Abs(Mathf.DeltaAngle(0, _strela2M.eulerAngles.z)) <= _zRotationLimit;
 
+        if (isCriticalHit == false && _seeker.CurrentTargetType == TargetType.Aircraft)
+        {
+            _seeker.ResetSeeker();
+        }
+
         LoadedMissile.Launch(isCriticalHit);
         LoadedMissile = null;
         State = LauncherState.Off;
@@ -159,7 +166,7 @@ public class Strela2MLauncher : MonoBehaviour
     {
         yield return _automaticLaunchDelay;
 
-        if (LoadedMissile.Seeker.HasLock == true)
+        if (_seeker.HasLock == true)
         {
             Fire();
         }

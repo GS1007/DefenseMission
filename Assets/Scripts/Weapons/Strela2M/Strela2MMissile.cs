@@ -89,12 +89,6 @@ public class Strela2MMissile : MonoBehaviour
     {
         Vector3 inheritedVelocity = Vector3.zero;
 
-        if (transform.parent != null)
-        {
-            Rigidbody parentRb = transform.parent.GetComponentInParent<Rigidbody>();
-            if (parentRb != null) inheritedVelocity = parentRb.linearVelocity;
-        }
-
         _meshRenderer.enabled = true;
 
         transform.parent = null;

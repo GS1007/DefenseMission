@@ -5,9 +5,10 @@ public class Strela2MSeeker : MonoBehaviour
     [Header("Detection Settings")]
     [SerializeField] private float _lockRange = 4200;
     [SerializeField] private float _seekerFOV = 2.0f;
+    [SerializeField] private float _cloudAngle = 20f;
+    [SerializeField] private float _sunAngle = 25f;
 
     [SerializeField] private LayerMask _aircraftLayer;
-    [SerializeField] private LayerMask _flareLayer;
     [SerializeField] private LayerMask _occlusionLayers;
 
     [Header("Design Spec Limits")]
@@ -17,8 +18,6 @@ public class Strela2MSeeker : MonoBehaviour
 
     [Header("Thermal & Countermeasures")]
     [SerializeField] private float _gimbalLimit = 25f;
-    [SerializeField] private float _flareHeatMultiplier = 5.0f;
-    [SerializeField] private float _flareTrackDecayRate = 0.6f;
     [SerializeField] private float _signalLockThreshold = 0.2f;
     [SerializeField] private float _sunThermalSignature = 5.0f;
 
@@ -93,17 +92,9 @@ public class Strela2MSeeker : MonoBehaviour
                 ProcessLockWindow();
                 break;
 
-            case TargetType.Flare:
-                if (!HasLock)
-                {
-                    _currentLockTime += (SignalStrength > _signalLockThreshold) ? Time.deltaTime : -Time.deltaTime;
-                    ProcessLockWindow();
-                }
-                else
-                {
-                    _currentLockTime -= Time.deltaTime * _flareTrackDecayRate;
-                    if (_currentLockTime <= 0f) ResetSeeker();
-                }
+            case TargetType.Cloud:
+                _currentLockTime += Time.deltaTime * 2.0f;
+                ProcessLockWindow();
                 break;
 
             default:
@@ -119,9 +110,20 @@ public class Strela2MSeeker : MonoBehaviour
         }
     }
 
+    public void ResetSeeker()
+    {
+        _currentLockTime = 0f;
+        HasLock = false;
+        _isUncaged = false;
+        SignalStrength = 0f;
+        CurrentTarget = null;
+        CurrentTargetType = TargetType.None;
+        _seekerWorldForward = transform.forward;
+    }
+
     private void ScanForTargets()
     {
-        int combinedMask = _aircraftLayer.value | _flareLayer.value;
+        int combinedMask = _aircraftLayer.value | _occlusionLayers.value;
         Collider[] contacts = Physics.OverlapSphere(transform.position, _lockRange, combinedMask);
 
         Transform bestTarget = null;
@@ -135,12 +137,18 @@ public class Strela2MSeeker : MonoBehaviour
             Vector3 dirToTarget = (col.transform.position - transform.position).normalized;
             float angle = Vector3.Angle(_seekerWorldForward, dirToTarget);
 
-            if (angle > _seekerFOV / 2f) continue;
+            bool isCloud = ((1 << col.gameObject.layer) & _occlusionLayers.value) != 0;
 
-            if (Physics.Raycast(transform.position, transform.forward, _lockRange, _occlusionLayers))
+            if (isCloud && angle <= _cloudAngle)
             {
-                continue;
+                bestTarget = col.transform;
+                highestSignal = 1f;
+                detectedType = TargetType.Cloud;
+                break;
             }
+
+            if (angle > _seekerFOV / 2f)
+                continue;
 
             float targetSignal = CalculateThermalSignature(col.gameObject, dirToTarget, angle);
             targetSignal *= Mathf.Clamp01(1f - (dist / _lockRange));
@@ -149,9 +157,7 @@ public class Strela2MSeeker : MonoBehaviour
             {
                 highestSignal = targetSignal;
                 bestTarget = col.transform;
-                detectedType = (((1 << col.gameObject.layer) & _flareLayer.value) != 0)
-                    ? TargetType.Flare
-                    : TargetType.Aircraft;
+                detectedType = TargetType.Aircraft;
             }
         }
 
@@ -160,9 +166,9 @@ public class Strela2MSeeker : MonoBehaviour
             Vector3 dirToSun = (_sunTransform.position - transform.position).normalized;
             float sunAngle = Vector3.Angle(_seekerWorldForward, dirToSun);
 
-            if (sunAngle <= 30f)
+            if (sunAngle <= _sunAngle)
             {
-                float sunSignal = (1f - (sunAngle / (_seekerFOV / 2f))) * _sunThermalSignature;
+                float sunSignal = (1f - (sunAngle / (_sunAngle / 2f))) * _sunThermalSignature;
 
                 if (sunSignal > highestSignal)
                 {
@@ -190,23 +196,8 @@ public class Strela2MSeeker : MonoBehaviour
             float mappedDot = (rawDot + 1f) / 2f;
             aspectFactor = Mathf.Lerp(0.9f, 1.0f, Mathf.Pow(mappedDot, 2f));
         }
-        else if (((1 << contact.layer) & _flareLayer.value) != 0)
-        {
-            heatMultiplier = _flareHeatMultiplier;
-        }
 
         return reticleFactor * aspectFactor * heatMultiplier;
-    }
-
-    private void ResetSeeker()
-    {
-        _currentLockTime = 0f;
-        HasLock = false;
-        _isUncaged = false;
-        SignalStrength = 0f;
-        CurrentTarget = null;
-        CurrentTargetType = TargetType.None;
-        _seekerWorldForward = transform.forward;
     }
 
     private void ProcessLockWindow()
