@@ -5,7 +5,6 @@ public class Strela2MSeeker : MonoBehaviour
     [Header("Detection Settings")]
     [SerializeField] private float _lockRange = 4200;
     [SerializeField] private float _seekerFOV = 2.0f;
-    [SerializeField] private float _cloudAngle = 20f;
     [SerializeField] private float _sunAngle = 25f;
 
     [SerializeField] private LayerMask _aircraftLayer;
@@ -139,12 +138,17 @@ public class Strela2MSeeker : MonoBehaviour
 
             bool isCloud = ((1 << col.gameObject.layer) & _occlusionLayers.value) != 0;
 
-            if (isCloud && angle <= _cloudAngle)
+            if (isCloud)
             {
-                bestTarget = col.transform;
-                highestSignal = 1f;
-                detectedType = TargetType.Cloud;
-                break;
+                OcclusionObjectAngleConfig occlusionObjectAngleConfig = col.GetComponent<OcclusionObjectAngleConfig>();
+
+                if(angle <= occlusionObjectAngleConfig.DetectionAngle)
+                {
+                    bestTarget = col.transform;
+                    highestSignal = 1f;
+                    detectedType = TargetType.Cloud;
+                    break;
+                }
             }
 
             if (angle > _seekerFOV / 2f)
