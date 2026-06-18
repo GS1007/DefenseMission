@@ -4,7 +4,7 @@ public class Strela2MSeeker : MonoBehaviour
 {
     [Header("Detection Settings")]
     [SerializeField] private float _lockRange = 4200;
-    [SerializeField] private float _seekerFOV = 2.0f;
+    [SerializeField] private float _seekerFOV = 1.5f;
     [SerializeField] private float _sunAngle = 25f;
 
     [SerializeField] private LayerMask _aircraftLayer;
@@ -142,7 +142,7 @@ public class Strela2MSeeker : MonoBehaviour
             {
                 OcclusionObjectAngleConfig occlusionObjectAngleConfig = col.GetComponent<OcclusionObjectAngleConfig>();
 
-                if(angle <= occlusionObjectAngleConfig.DetectionAngle)
+                if (angle <= occlusionObjectAngleConfig.DetectionAngle)
                 {
                     bestTarget = col.transform;
                     highestSignal = 1f;
