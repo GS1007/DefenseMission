@@ -35,6 +35,8 @@ public class Strela2MLauncher : MonoBehaviour
 
     private Strela2MSeeker _seeker;
 
+    public Strela2MSeeker CurrentSeeker { get { return _seeker; } }
+
     private void OnEnable()
     {
         Strela2MBattery.PowerUpStarted += OnBatteryPowerupStart;

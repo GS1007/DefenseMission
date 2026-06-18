@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class FireReportUI : MonoBehaviour
 {
@@ -21,10 +22,13 @@ public class FireReportUI : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Strela2MHUD _instructorPanel;
+    [SerializeField] private Strela2MLauncher _strela2MLauncher;
 
     private List<FireResultData> _fireResultDatas = new List<FireResultData>();
 
     private int _resultDataIndex = 0;
+
+    private FireResultData _currentFireResultData;
 
     private void OnEnable()
     {
@@ -71,17 +75,25 @@ public class FireReportUI : MonoBehaviour
 
     private void AddFireResultData(IAircraftTarget target, bool isDamageCritical)
     {
-        AircraftType _aircraftType = target.GetAircraftType();
+        _fireResultDatas.Add(_currentFireResultData);
+    }
 
-        _fireResultDatas.Add(new FireResultData()
+    private void DetectTarget()
+    {
+        IAircraftTarget target = _strela2MLauncher.CurrentSeeker.CurrentTarget.GetComponent<IAircraftTarget>();
+
+        if(target != null)
         {
-            TargetObjectName = _aircraftType.ToString(),
-            TargetSprite = _aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
-            AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
-            LaunchMode = _instructorPanel.MissileLaunchMode,
-            Result = isDamageCritical ? "ჩამოვარდა" : "დაზიანდა",
-            HitPoint = _aircraftType == AircraftType.MI24 ?
-            (isDamageCritical ? new Vector3(Random.Range(-120, 400f), Random.Range(-20f, 70f), 0f) : new Vector3(Random.Range(-570f, -100), Random.Range(-20f, 70f), 0f)) : (isDamageCritical ? new Vector3(Random.Range(-100f, 300f), Random.Range(-80f, 60f), 0f) : new Vector3(Random.Range(-700, -400), Random.Range(20f, 75f), 0f))
-        });
+            AircraftType aircraftType = target.GetAircraftType();
+
+            _currentFireResultData = new FireResultData()
+            {
+                TargetObjectName = aircraftType.ToString(),
+                TargetSprite = aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
+                AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
+                LaunchMode = _instructorPanel.MissileLaunchMode,
+                HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(Random.Range(-120, 400f), Random.Range(-20f, 70f), 0f) : new Vector3(Random.Range(-100f, 300f), Random.Range(-80f, 60f), 0f)
+            };
+        }
     }
 }
