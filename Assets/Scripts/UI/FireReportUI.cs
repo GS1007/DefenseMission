@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class FireReportUI : MonoBehaviour
 {
@@ -34,12 +33,14 @@ public class FireReportUI : MonoBehaviour
     {
         AviationManager.SimulationEnded += DisplayFireResultData;
         AircraftCollisionManager.DamagedReceived += AddFireResultData;
+        Strela2MInput.TriggerPullingEnded += DetectCurrentTarget;
     }
 
     private void OnDisable()
     {
         AviationManager.SimulationEnded -= DisplayFireResultData;
         AircraftCollisionManager.DamagedReceived -= AddFireResultData;
+        Strela2MInput.TriggerPullingEnded -= DetectCurrentTarget;
     }
 
     public void OnNextButtonClick()
@@ -67,7 +68,7 @@ public class FireReportUI : MonoBehaviour
 
         _hitPointRect.anchoredPosition = _fireResultDatas[_resultDataIndex].HitPoint;
         _targetNameText.text = $"სამიზნე ობიექტი: {_fireResultDatas[_resultDataIndex].TargetObjectName}";
-        _angleSettingsText.text = $"გადახრა: {_fireResultDatas[_resultDataIndex].AngleSettings.ToString()}";
+        _angleSettingsText.text = $"გადახრა: {_fireResultDatas[_resultDataIndex].AngleSettings}";
         _launchModeText.text = $"სროლის რეჟიმი: {_fireResultDatas[_resultDataIndex].LaunchMode}";
         _resultText.text = $"შედეგი: {_fireResultDatas[_resultDataIndex].Result}";
         _aircraftImage.sprite = _fireResultDatas[_resultDataIndex].TargetSprite;
@@ -78,11 +79,11 @@ public class FireReportUI : MonoBehaviour
         _fireResultDatas.Add(_currentFireResultData);
     }
 
-    private void DetectTarget()
+    private void DetectCurrentTarget()
     {
         IAircraftTarget target = _strela2MLauncher.CurrentSeeker.CurrentTarget.GetComponent<IAircraftTarget>();
 
-        if(target != null)
+        if (target != null)
         {
             AircraftType aircraftType = target.GetAircraftType();
 
@@ -95,5 +96,7 @@ public class FireReportUI : MonoBehaviour
                 HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(Random.Range(-120, 400f), Random.Range(-20f, 70f), 0f) : new Vector3(Random.Range(-100f, 300f), Random.Range(-80f, 60f), 0f)
             };
         }
+
+        Debug.Log(_currentFireResultData.TargetObjectName);
     }
 }

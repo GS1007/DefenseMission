@@ -24087,6 +24087,7 @@ MonoBehaviour:
   _mi24Sprite: {fileID: 21300000, guid: 3b6f9765d4ad96049a97cdb3a96cf47c, type: 3}
   _su25Sprite: {fileID: 21300000, guid: 46da57ce3b5265b41a4df932da147c0c, type: 3}
   _instructorPanel: {fileID: 1836826507}
+  _strela2MLauncher: {fileID: 1715799050}
 --- !u!114 &1836826507
 MonoBehaviour:
   m_ObjectHideFlags: 0
