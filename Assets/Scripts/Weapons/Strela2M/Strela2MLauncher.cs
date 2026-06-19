@@ -44,6 +44,7 @@ public class Strela2MLauncher : MonoBehaviour
         Strela2MInput.TriggerPullingStarted += OnTriggerPullingStart;
         Strela2MInput.TriggerPullingEnded += OnTroggerPullingEnd;
         Strela2MBattery.BatteryDied += OnBatteryDeath;
+        Strela2MInput.LauncherReseted += OnLaucherReset;
     }
 
     private void Start()
@@ -82,6 +83,7 @@ public class Strela2MLauncher : MonoBehaviour
         Strela2MBattery.PoweredOn -= OnBatteryPowerOn;
         Strela2MBattery.PowerUpStarted -= OnBatteryPowerupStart;
         Strela2MBattery.BatteryDied -= OnBatteryDeath;
+        Strela2MInput.LauncherReseted -= OnLaucherReset;
     }
 
     private void LoadMissile()
@@ -191,6 +193,11 @@ public class Strela2MLauncher : MonoBehaviour
     private void OnBatteryDeath()
     {
         State = LauncherState.Off;
+        _triggerIsHeld = false;
+    }
+
+    private void OnLaucherReset()
+    {
         _triggerIsHeld = false;
     }
 }

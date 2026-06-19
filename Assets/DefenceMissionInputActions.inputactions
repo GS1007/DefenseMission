@@ -32,6 +32,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "LauncherReset",
+                    "type": "Button",
+                    "id": "4e7335c6-0fff-4e7e-b6f2-81b55f7d456b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -98,6 +107,17 @@
                     "processors": "",
                     "groups": ";VRController",
                     "action": "TriggerPullingEnd",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "521ca7c8-dfaf-45a7-9b44-1e9f065047d9",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LauncherReset",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
