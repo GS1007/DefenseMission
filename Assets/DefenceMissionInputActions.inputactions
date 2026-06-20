@@ -41,6 +41,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "LeftEyeGameView",
+                    "type": "Button",
+                    "id": "9d34bf7d-b24e-434c-a695-003cc4dbd17c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightEyeGameView",
+                    "type": "Button",
+                    "id": "7fbf5c38-061c-4e7b-bc7e-39af9d82efc6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BothEyesGameView",
+                    "type": "Button",
+                    "id": "572ddb0f-bdb0-4731-be9e-c3e0c344e738",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -118,6 +145,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "LauncherReset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a0136e45-27f0-4501-a1e7-926e0e19956f",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftEyeGameView",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ef521ed-2b73-46f0-95e3-53a13b89fe5a",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightEyeGameView",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b8b55ee3-130d-4492-a4e7-85e8eea53b44",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BothEyesGameView",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

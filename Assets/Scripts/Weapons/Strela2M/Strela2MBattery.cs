@@ -15,6 +15,8 @@ public class Strela2MBattery : MonoBehaviour
 
     private float _currentBatteryTime = 0f;
 
+    public float MaxBatteryLife { get { return _maxBatteryLife; } }
+
     private void OnEnable()
     {
         Strela2MInput.PowerToggled += PowerUp;

@@ -59,7 +59,23 @@ public class Strela2MSeeker : MonoBehaviour
                 _seekerTrackRate * Mathf.Deg2Rad * Time.deltaTime,
                 0f);
 
-            if (Vector3.Angle(transform.forward, _seekerWorldForward) > _gimbalLimit)
+
+            float angleLimit = _gimbalLimit;
+
+            if(CurrentTargetType == TargetType.Aircraft)
+            {
+                angleLimit = _gimbalLimit;
+            }
+            else if(CurrentTargetType == TargetType.Cloud)
+            {
+                angleLimit = CurrentTarget.GetComponent<OcclusionObjectAngleConfig>().DetectionAngle;
+            }
+            else
+            {
+                angleLimit = _sunAngle;
+            }
+
+            if (Vector3.Angle(transform.forward, _seekerWorldForward) > angleLimit)
             {
                 ResetSeeker();
                 return;

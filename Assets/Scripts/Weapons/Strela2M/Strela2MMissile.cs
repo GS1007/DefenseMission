@@ -87,14 +87,12 @@ public class Strela2MMissile : MonoBehaviour
 
     public void Launch(bool isCriticalHit)
     {
-        Vector3 inheritedVelocity = Vector3.zero;
-
         _meshRenderer.enabled = true;
 
         transform.parent = null;
         _isAirborne = true;
         _rb.isKinematic = false;
-        _rb.linearVelocity = inheritedVelocity;
+        _rb.useGravity = true;
 
         _target = _seeker.CurrentTarget;
         _targetType = _seeker.CurrentTargetType;
@@ -147,6 +145,7 @@ public class Strela2MMissile : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
+        _rb.useGravity = false;
         _motorIgnited = true;
 
         if (_target != null)
