@@ -93,10 +93,10 @@ public class FireReportUI : MonoBehaviour
                 TargetSprite = aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
                 AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
                 LaunchMode = _instructorPanel.MissileLaunchMode,
-                HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(Random.Range(-120, 400f), Random.Range(-20f, 70f), 0f) : new Vector3(Random.Range(-100f, 300f), Random.Range(-80f, 60f), 0f)
+                HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(0f, -20f, 0f)
             };
-        }
 
-        Debug.Log(_currentFireResultData.TargetObjectName);
+            Debug.Log(_currentFireResultData.TargetObjectName);
+        }
     }
 }
