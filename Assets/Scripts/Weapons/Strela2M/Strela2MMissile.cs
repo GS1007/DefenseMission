@@ -41,7 +41,13 @@ public class Strela2MMissile : MonoBehaviour
         _target = _seeker.CurrentTarget;
         _targetType = _seeker.CurrentTargetType;
 
-        if (!_motorIgnited) return;
+        if (!_motorIgnited)
+        {
+            if (_rb.linearVelocity.sqrMagnitude > 1f)
+                transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
+
+            return;
+        }
 
         if (_target == null || _targetType == TargetType.None)
         {
@@ -60,9 +66,13 @@ public class Strela2MMissile : MonoBehaviour
             else
                 ApplyProportionalNavigation();
         }
-        else if (_rb.linearVelocity.sqrMagnitude > 1f)
+        else
         {
-            transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
+            if (_rb.linearVelocity.sqrMagnitude > 1f)
+                transform.rotation = Quaternion.LookRotation(_rb.linearVelocity);
+
+            if (_target != null)
+                _lastLosVector = (_target.position - transform.position).normalized;
         }
 
         ApplyThrust();
@@ -116,7 +126,9 @@ public class Strela2MMissile : MonoBehaviour
         _lastLosVector = currentLos;
 
         Vector3 missileVelocity = _rb.linearVelocity;
-        Vector3 lateralAccelerationCommand = Vector3.Cross(angularVelocityLos * _navigationConstant, missileVelocity);
+
+        float turnSpeed = Mathf.Max(60f, missileVelocity.magnitude);
+        Vector3 lateralAccelerationCommand = Vector3.Cross(angularVelocityLos * _navigationConstant, missileVelocity.normalized * turnSpeed);
 
         _rb.linearVelocity += lateralAccelerationCommand * Time.fixedDeltaTime;
 

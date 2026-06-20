@@ -7,6 +7,7 @@ public class Strela2MHUD : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _targetNameText;
     [SerializeField] private TextMeshProUGUI _angleSetupText;
+    [SerializeField] private TextMeshProUGUI _fireTimeAngleSetupText;
     [SerializeField] private TextMeshProUGUI _launchModeText;
     [SerializeField] private TextMeshProUGUI _notificationText;
 
@@ -23,6 +24,7 @@ public class Strela2MHUD : MonoBehaviour
         Strela2MLauncher.IllegallyFired += EnableNotificationtext;
         Strela2MLauncher.MissileLoaded += OnMissileLoad;
         Strela2MLauncher.LaunchModeSet += DisplayLaunchMode;
+        Strela2MLauncher.Fired += DisplayFireTimeAngleSetup;
     }
 
     private void Update()
@@ -55,6 +57,7 @@ public class Strela2MHUD : MonoBehaviour
         Strela2MLauncher.IllegallyFired -= EnableNotificationtext;
         Strela2MLauncher.MissileLoaded -= OnMissileLoad;
         Strela2MLauncher.LaunchModeSet -= DisplayLaunchMode;
+        Strela2MLauncher.Fired -= DisplayFireTimeAngleSetup;
     }
 
     private void OnMissileLoad(Strela2MMissile missile)
@@ -66,8 +69,6 @@ public class Strela2MHUD : MonoBehaviour
     {
         _targetNameText.text = $"სამიზნე ობიექტი: {name}";
         CurrentTargetName = name;
-
-        Debug.Log(CurrentTargetName);
     }
 
     private void DisplayAngleSetupValues()
@@ -93,5 +94,11 @@ public class Strela2MHUD : MonoBehaviour
     private void DisableNotificationtext()
     {
         _notificationText.enabled = false;
+    }
+
+    private void DisplayFireTimeAngleSetup()
+    {
+        float angle = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
+        _fireTimeAngleSetupText.text = $"გადახრა გასროლისას: {Mathf.Abs(angle):F1}";
     }
 }

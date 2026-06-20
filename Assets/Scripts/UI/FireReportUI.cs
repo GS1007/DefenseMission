@@ -13,7 +13,7 @@ public class FireReportUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _targetNameText;
     [SerializeField] private TextMeshProUGUI _angleSettingsText;
     [SerializeField] private TextMeshProUGUI _launchModeText;
-    [SerializeField] private TextMeshProUGUI _resultText;
+    [SerializeField] private TextMeshProUGUI _differenceBetweenLockAndFireText;
 
     [Header("Aircraft Sprites")]
     [SerializeField] private Sprite _mi24Sprite;
@@ -70,7 +70,7 @@ public class FireReportUI : MonoBehaviour
         _targetNameText.text = $"სამიზნე ობიექტი: {_fireResultDatas[_resultDataIndex].TargetObjectName}";
         _angleSettingsText.text = $"გადახრა: {_fireResultDatas[_resultDataIndex].AngleSettings}";
         _launchModeText.text = $"სროლის რეჟიმი: {_fireResultDatas[_resultDataIndex].LaunchMode}";
-        _resultText.text = $"შედეგი: {_fireResultDatas[_resultDataIndex].Result}";
+        _differenceBetweenLockAndFireText.text = $"სამიზნის ჩაჭერიდან გასროლის დრო: {_fireResultDatas[_resultDataIndex].DifferenceBetweeenLockAndFire:F1}";
         _aircraftImage.sprite = _fireResultDatas[_resultDataIndex].TargetSprite;
     }
 
@@ -81,22 +81,28 @@ public class FireReportUI : MonoBehaviour
 
     private void DetectCurrentTarget()
     {
-        IAircraftTarget target = _strela2MLauncher.CurrentSeeker.CurrentTarget.GetComponent<IAircraftTarget>();
+        Transform currentTarget = _strela2MLauncher.CurrentSeeker.CurrentTarget;
 
-        if (target != null)
+        if (currentTarget != null)
         {
-            AircraftType aircraftType = target.GetAircraftType();
+            IAircraftTarget target = currentTarget.GetComponent<IAircraftTarget>();
 
-            _currentFireResultData = new FireResultData()
+            if (target != null)
             {
-                TargetObjectName = aircraftType.ToString(),
-                TargetSprite = aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
-                AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
-                LaunchMode = _instructorPanel.MissileLaunchMode,
-                HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(0f, -20f, 0f)
-            };
+                AircraftType aircraftType = target.GetAircraftType();
 
-            Debug.Log(_currentFireResultData.TargetObjectName);
+                _currentFireResultData = new FireResultData()
+                {
+                    TargetObjectName = aircraftType.ToString(),
+                    TargetSprite = aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
+                    AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
+                    LaunchMode = _instructorPanel.MissileLaunchMode,
+                    DifferenceBetweeenLockAndFire = Time.time - _strela2MLauncher.CurrentSeeker.TargetLockTime,
+                    HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(0f, -20f, 0f)
+                };
+
+                Debug.Log(_currentFireResultData.TargetObjectName);
+            }
         }
     }
 }

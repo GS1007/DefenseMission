@@ -4018,7 +4018,7 @@ GameObject:
   - component: {fileID: 275002980}
   - component: {fileID: 275002979}
   m_Layer: 5
-  m_Name: ResultText
+  m_Name: DifferenceBetweenLockAndFireText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4040,8 +4040,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 350, y: 50}
-  m_SizeDelta: {x: 576, y: 100}
+  m_AnchoredPosition: {x: 764, y: 50}
+  m_SizeDelta: {x: 1400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &275002979
 MonoBehaviour:
@@ -4063,7 +4063,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u10E8\u10D4\u10D3\u10D4\u10D2\u10D8: "
+  m_text: "\u10E1\u10D0\u10DB\u10D8\u10D6\u10DC\u10D8\u10E1 \u10E9\u10D0\u10ED\u10D4\u10E0\u10D8\u10D3\u10D0\u10DC
+    \u10D2\u10D0\u10E1\u10E0\u10DD\u10DA\u10D8\u10E1 \u10D3\u10E0\u10DD:"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e742b6ea7b2ece746bef4dc6534f834b, type: 2}
   m_sharedMaterial: {fileID: 8866407281570933507, guid: e742b6ea7b2ece746bef4dc6534f834b, type: 2}
@@ -10161,7 +10162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -175, y: 80}
+  m_AnchoredPosition: {x: 200, y: 80}
   m_SizeDelta: {x: 250, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &742951913
@@ -11122,7 +11123,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 175, y: 80}
+  m_AnchoredPosition: {x: 500, y: 80}
   m_SizeDelta: {x: 250, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &791845702
@@ -15487,7 +15488,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: 00
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e742b6ea7b2ece746bef4dc6534f834b, type: 2}
   m_sharedMaterial: {fileID: 8866407281570933507, guid: e742b6ea7b2ece746bef4dc6534f834b, type: 2}
@@ -17622,7 +17623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DevelopmentConsole
   _gameObjectTransform: {fileID: 1715799044}
-  _environment: 0
+  _environment: 2
   _objectTransformSettingsVRHolding: {fileID: 11400000, guid: 7b06f03cf922d1d4db3b8920ba1e78b7, type: 2}
   _objectTransformSettingsVRAiming: {fileID: 11400000, guid: a78ca16a92d0c11439c21b8811fc9121, type: 2}
   _objectTransformSettingsPC: {fileID: 11400000, guid: e4715762ed12b5642ae6041270e6062a, type: 2}
@@ -23733,8 +23734,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1715799043}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12806949, y: -0.15199547, z: -0.25819844, w: 0.94542545}
-  m_LocalPosition: {x: 0.0027, y: -0.0017, z: -0.1695}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.2, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -24991,7 +24992,7 @@ MonoBehaviour:
   _targetNameText: {fileID: 2054206028}
   _angleSettingsText: {fileID: 1101265285}
   _launchModeText: {fileID: 541262339}
-  _resultText: {fileID: 275002979}
+  _differenceBetweenLockAndFireText: {fileID: 275002979}
   _mi24Sprite: {fileID: 21300000, guid: 3b6f9765d4ad96049a97cdb3a96cf47c, type: 3}
   _su25Sprite: {fileID: 21300000, guid: 46da57ce3b5265b41a4df932da147c0c, type: 3}
   _instructorPanel: {fileID: 1836826507}
@@ -25011,6 +25012,7 @@ MonoBehaviour:
   _strela2M: {fileID: 1715799044}
   _targetNameText: {fileID: 219574069}
   _angleSetupText: {fileID: 1048011805}
+  _fireTimeAngleSetupText: {fileID: 1854233813}
   _launchModeText: {fileID: 447341998}
   _notificationText: {fileID: 1812534584}
   _notificationDissapearTime: 3

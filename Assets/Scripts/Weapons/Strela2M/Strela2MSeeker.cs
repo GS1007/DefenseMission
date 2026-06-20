@@ -30,7 +30,7 @@ public class Strela2MSeeker : MonoBehaviour
     public float SignalStrength { get; private set; }
     public TargetType CurrentTargetType { get; private set; }
     public bool HasLock { get; private set; }
-
+    public float TargetLockTime { get; private set; }
     public float LockProgress => Mathf.Clamp01(_currentLockTime / _lockDuration);
 
     private void Start()
@@ -62,11 +62,11 @@ public class Strela2MSeeker : MonoBehaviour
 
             float angleLimit = _gimbalLimit;
 
-            if(CurrentTargetType == TargetType.Aircraft)
+            if (CurrentTargetType == TargetType.Aircraft)
             {
                 angleLimit = _gimbalLimit;
             }
-            else if(CurrentTargetType == TargetType.Cloud)
+            else if (CurrentTargetType == TargetType.Cloud)
             {
                 angleLimit = CurrentTarget.GetComponent<OcclusionObjectAngleConfig>().DetectionAngle;
             }
@@ -228,6 +228,7 @@ public class Strela2MSeeker : MonoBehaviour
         {
             _isUncaged = true;
             HasLock = true;
+            TargetLockTime = Time.time;
         }
 
         if (HasLock && _currentLockTime <= 0f) HasLock = false;

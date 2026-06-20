@@ -217,9 +217,9 @@ MonoBehaviour:
   _rb: {fileID: 5504095074594868413}
   _meshRenderer: {fileID: 7730572820492879274}
   _seeker: {fileID: 4909095420357039862}
-  _ejectionForce: 15
-  _sustainerDelay: 0.4
-  _sustainerThrust: 30
+  _ejectionForce: 20
+  _sustainerDelay: 0.3
+  _sustainerThrust: 200
   _maxSpeed: 510
   _navigationConstant: 4
   _selfDestructTime: 14

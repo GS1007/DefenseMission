@@ -11,25 +11,27 @@ public class Strela2MBatteryTimer : MonoBehaviour
 
     private bool _timerRunning = false;
 
-    private float _timeLeft;
+    private float _timeElapsed;
     private float _nextTimeToTimerUpdate;
 
     private void OnEnable()
     {
         Strela2MBattery.PowerUpStarted += LaunchTimer;
         Strela2MBattery.BatteryDied += StopTimer;
+        Strela2MLauncher.Fired += StopTimer;
     }
 
     private void Start()
     {
-        _timerText.text = _battery.MaxBatteryLife.ToString();
+        _timeElapsed = 0f;
+        _timerText.text = $"0{_timeElapsed}";
     }
 
     private void Update()
     {
-        if(_timerRunning)
+        if (_timerRunning)
         {
-            if(Time.time >= _nextTimeToTimerUpdate)
+            if (Time.time >= _nextTimeToTimerUpdate)
             {
                 UpdateTimer();
                 _nextTimeToTimerUpdate = Time.time + TIMER_UPDATE_FREQUENCY;
@@ -41,26 +43,26 @@ public class Strela2MBatteryTimer : MonoBehaviour
     {
         Strela2MBattery.PowerUpStarted -= LaunchTimer;
         Strela2MBattery.BatteryDied -= StopTimer;
+        Strela2MLauncher.Fired -= StopTimer;
     }
 
     private void LaunchTimer()
     {
         _timerRunning = true;
-        _timeLeft = _battery.MaxBatteryLife;
         _nextTimeToTimerUpdate = Time.time + TIMER_UPDATE_FREQUENCY;
         UpdateTimer();
     }
 
     private void UpdateTimer()
     {
-        _timeLeft--;
-        _timerText.text = _timeLeft.ToString();
+        ++_timeElapsed;
+        _timerText.text = _timeElapsed < 10 ? $"0{_timeElapsed}" : _timeElapsed.ToString();
     }
 
     private void StopTimer()
     {
         _timerRunning = false;
-        _timeLeft = 0f;
+        _timeElapsed = 0f;
         _nextTimeToTimerUpdate = 0f;
     }
 }
