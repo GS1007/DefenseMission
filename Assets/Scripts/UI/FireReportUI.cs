@@ -15,6 +15,9 @@ public class FireReportUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _launchModeText;
     [SerializeField] private TextMeshProUGUI _differenceBetweenLockAndFireText;
 
+    [Header("Temporary")]
+    [SerializeField] private GameObject _reportPanel;
+
     [Header("Aircraft Sprites")]
     [SerializeField] private Sprite _mi24Sprite;
     [SerializeField] private Sprite _su25Sprite;
@@ -34,6 +37,7 @@ public class FireReportUI : MonoBehaviour
         AviationManager.SimulationEnded += DisplayFireResultData;
         AircraftCollisionManager.DamagedReceived += AddFireResultData;
         Strela2MInput.TriggerPullingEnded += DetectCurrentTarget;
+        Strela2MInput.FireReportOpened += OnFireReportOpen_ButtonClick;
     }
 
     private void OnDisable()
@@ -41,18 +45,19 @@ public class FireReportUI : MonoBehaviour
         AviationManager.SimulationEnded -= DisplayFireResultData;
         AircraftCollisionManager.DamagedReceived -= AddFireResultData;
         Strela2MInput.TriggerPullingEnded -= DetectCurrentTarget;
+        Strela2MInput.FireReportOpened -= OnFireReportOpen_ButtonClick;
     }
 
     public void OnNextButtonClick()
     {
-        DisplayFireResultData();
-
         _resultDataIndex++;
 
         if (_resultDataIndex == _fireResultDatas.Count)
         {
             _resultDataIndex = 0;
         }
+
+        DisplayFireResultData();
     }
 
     private void DisplayFireResultData()
@@ -68,8 +73,8 @@ public class FireReportUI : MonoBehaviour
 
         _hitPointRect.anchoredPosition = _fireResultDatas[_resultDataIndex].HitPoint;
         _targetNameText.text = $"სამიზნე ობიექტი: {_fireResultDatas[_resultDataIndex].TargetObjectName}";
-        _angleSettingsText.text = $"გადახრა: {_fireResultDatas[_resultDataIndex].AngleSettings}";
-        _launchModeText.text = $"სროლის რეჟიმი: {_fireResultDatas[_resultDataIndex].LaunchMode}";
+        _angleSettingsText.text = $"გადახრა: {_fireResultDatas[_resultDataIndex].AngleSettings:F1}";
+        _launchModeText.text = _fireResultDatas[_resultDataIndex].LaunchMode == LaunchMode.Automatic ? "სროლის რეჟიმი: ავტომატური" : "სროლის რეჟიმი: ხელის";
         _differenceBetweenLockAndFireText.text = $"სამიზნის ჩაჭერიდან გასროლის დრო: {_fireResultDatas[_resultDataIndex].DifferenceBetweeenLockAndFire:F1}";
         _aircraftImage.sprite = _fireResultDatas[_resultDataIndex].TargetSprite;
     }
@@ -81,6 +86,11 @@ public class FireReportUI : MonoBehaviour
 
     private void DetectCurrentTarget()
     {
+        if(_strela2MLauncher.State != LauncherState.Ready)
+        {
+            return;
+        }
+
         Transform currentTarget = _strela2MLauncher.CurrentSeeker.CurrentTarget;
 
         if (currentTarget != null)
@@ -98,11 +108,25 @@ public class FireReportUI : MonoBehaviour
                     AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
                     LaunchMode = _instructorPanel.MissileLaunchMode,
                     DifferenceBetweeenLockAndFire = Time.time - _strela2MLauncher.CurrentSeeker.TargetLockTime,
-                    HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(0f, -20f, 0f)
+                    HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(-417f, -45f, 0f)
                 };
 
                 Debug.Log(_currentFireResultData.TargetObjectName);
+                Debug.Log(_currentFireResultData.LaunchMode);
             }
+        }
+    }
+
+    private void OnFireReportOpen_ButtonClick()
+    {
+        if(_reportPanel.activeSelf == false)
+        {
+            _reportPanel.SetActive(true);
+            DisplayFireResultData();
+        }
+        else
+        {
+            _reportPanel.SetActive(false);
         }
     }
 }

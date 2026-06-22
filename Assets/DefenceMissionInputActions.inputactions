@@ -68,6 +68,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleAngleSetupStick",
+                    "type": "Button",
+                    "id": "0c3571f9-40d3-49ad-adc3-6b4a343cf18c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "TrackingReset",
+                    "type": "Button",
+                    "id": "144279f0-c133-4e7f-82b3-55e7307983b2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "FireReportOpen",
+                    "type": "Button",
+                    "id": "c1bab828-51f8-461a-ad5e-548bcc901987",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -178,6 +205,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "BothEyesGameView",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e033de4a-575f-4482-b8ff-2a6329ce9a4b",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleAngleSetupStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0e5ebec9-3e11-4e87-9c74-975d9782bda1",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TrackingReset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "361b0042-e802-441a-a21d-dbb4abda54b7",
+                    "path": "<Keyboard>/h",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FireReportOpen",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

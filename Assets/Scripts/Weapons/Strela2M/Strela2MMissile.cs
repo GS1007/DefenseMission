@@ -4,6 +4,7 @@ using UnityEngine;
 public class Strela2MMissile : MonoBehaviour
 {
     [Header("Components")]
+    [SerializeField] private GameObject _flightTrail;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private MeshRenderer _meshRenderer;
     [SerializeField] private Strela2MSeeker _seeker;
@@ -98,6 +99,7 @@ public class Strela2MMissile : MonoBehaviour
     public void Launch(bool isCriticalHit)
     {
         _meshRenderer.enabled = true;
+        _flightTrail.SetActive(true);  
 
         transform.parent = null;
         _isAirborne = true;

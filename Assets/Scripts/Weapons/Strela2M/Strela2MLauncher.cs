@@ -9,6 +9,8 @@ public class Strela2MLauncher : MonoBehaviour
     public static event Action IllegallyFired;
     public static event Action<LaunchMode> LaunchModeSet;
 
+    [SerializeField] private GameObject _angleSetupStick;
+
     [SerializeField] private Transform _strela2M;
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
@@ -16,25 +18,29 @@ public class Strela2MLauncher : MonoBehaviour
     [SerializeField] private LayerMask _aircraftLayer;
 
     [SerializeField] private Strela2MMissile _missilePrefab;
+    [SerializeField] private Strela2MInput _input;
 
     [SerializeField] private float _lauchModeSetupTime = 0f;
     [SerializeField] private float _angleSetupFOV = 0f;
     [SerializeField] private float _automaticLaunchTime = 0f;
     [SerializeField] private float _zRotationLimit = 0f;
+    [SerializeField] private float _trackingLockResetTime = 1f;
 
-    private bool _modeCheckingStarted = false;
     private bool _triggerIsHeld = false;
+    private bool _trackingIsAllowed = true;
 
     private LaunchMode _launchMode = LaunchMode.Automatic;
 
     private WaitForSeconds _launchModeSetupDelay;
     private WaitForSeconds _automaticLaunchDelay;
-
-    public LauncherState State { get; set; } = LauncherState.Off;
-    public Strela2MMissile LoadedMissile { get; private set; }
+    private WaitForSeconds _trackingLockResetDelay;
 
     private Strela2MSeeker _seeker;
 
+    private IEnumerator _launchModeSetRoutine;
+
+    public LauncherState State { get; set; } = LauncherState.Off;
+    public Strela2MMissile LoadedMissile { get; private set; }
     public Strela2MSeeker CurrentSeeker { get { return _seeker; } }
 
     private void OnEnable()
@@ -45,12 +51,15 @@ public class Strela2MLauncher : MonoBehaviour
         Strela2MInput.TriggerPullingEnded += OnTroggerPullingEnd;
         Strela2MBattery.BatteryDied += OnBatteryDeath;
         Strela2MInput.LauncherReseted += OnLaucherReset;
+        Strela2MInput.TrackingReseted += OnTrackingReset;
+        Strela2MInput.AngleSetupStickToggled += OnAngleSetupStickToggle;
     }
 
     private void Start()
     {
         _launchModeSetupDelay = new WaitForSeconds(_lauchModeSetupTime);
         _automaticLaunchDelay = new WaitForSeconds(_automaticLaunchTime);
+        _trackingLockResetDelay = new WaitForSeconds(_trackingLockResetTime);
     }
 
     private void Update()
@@ -60,19 +69,32 @@ public class Strela2MLauncher : MonoBehaviour
             return;
         }
 
-        _seeker.DoUpdate();
+        if(_trackingIsAllowed == true)
+        {
+            _seeker.DoUpdate();
+        }
 
         if (_triggerIsHeld == true)
         {
+            LaunchModeSet?.Invoke(_launchMode);
+
             if (_launchMode == LaunchMode.Manual)
             {
                 Fire();
             }
             else
             {
-                _triggerIsHeld = false;
                 StartCoroutine(LaunchAutomaticMode());
             }
+
+            if (_launchModeSetRoutine != null)
+            {
+                StopCoroutine(_launchModeSetRoutine);
+                _launchModeSetRoutine = null;
+            }
+
+            _launchMode = LaunchMode.Automatic;
+            _triggerIsHeld = false;
         }
     }
 
@@ -84,6 +106,8 @@ public class Strela2MLauncher : MonoBehaviour
         Strela2MBattery.PowerUpStarted -= OnBatteryPowerupStart;
         Strela2MBattery.BatteryDied -= OnBatteryDeath;
         Strela2MInput.LauncherReseted -= OnLaucherReset;
+        Strela2MInput.TrackingReseted -= OnTrackingReset;
+        Strela2MInput.AngleSetupStickToggled -= OnAngleSetupStickToggle;
     }
 
     private void LoadMissile()
@@ -113,17 +137,17 @@ public class Strela2MLauncher : MonoBehaviour
 
     private void OnTriggerPullingStart()
     {
-        IllegallyFired?.Invoke();
-
         if (State != LauncherState.Ready)
         {
+            IllegallyFired?.Invoke();
+
             return;
         }
 
-        if (_modeCheckingStarted == false)
+        if(_launchModeSetRoutine == null)
         {
-            StartCoroutine(SetLaunchMode());
-            _modeCheckingStarted = true;
+            _launchModeSetRoutine = SetManualLaunchMode();
+            StartCoroutine(_launchModeSetRoutine);
         }
     }
 
@@ -135,8 +159,6 @@ public class Strela2MLauncher : MonoBehaviour
         }
 
         _triggerIsHeld = true;
-
-        Debug.Log(_launchMode);
     }
 
     private void Fire()
@@ -151,19 +173,15 @@ public class Strela2MLauncher : MonoBehaviour
         LoadedMissile.Launch(isCriticalHit);
         LoadedMissile = null;
         State = LauncherState.Off;
-        _triggerIsHeld = false;
-        _modeCheckingStarted = false;
 
         Fired?.Invoke();
     }
 
-    private IEnumerator SetLaunchMode()
+    private IEnumerator SetManualLaunchMode()
     {
         yield return _launchModeSetupDelay;
 
-        _launchMode = _triggerIsHeld ? LaunchMode.Automatic : LaunchMode.Manual;
-
-        LaunchModeSet?.Invoke(_launchMode);
+        _launchMode = LaunchMode.Manual;
     }
 
     private IEnumerator LaunchAutomaticMode()
@@ -173,6 +191,16 @@ public class Strela2MLauncher : MonoBehaviour
         if (_seeker.HasLock == true)
         {
             Fire();
+        }
+    }
+
+    private IEnumerator ResetTrackingLock()
+    {
+        yield return _trackingLockResetDelay;
+
+        if (_trackingIsAllowed == false)
+        {
+            _trackingIsAllowed = true;
         }
     }
 
@@ -199,5 +227,26 @@ public class Strela2MLauncher : MonoBehaviour
     private void OnLaucherReset()
     {
         _triggerIsHeld = false;
+    }
+
+    private void OnTrackingReset()
+    {
+        if(_seeker == null)
+        {
+            return;
+        }
+
+        if(_trackingIsAllowed == true)
+        {
+            StartCoroutine(ResetTrackingLock());
+
+            _seeker.ResetSeeker();
+            _trackingIsAllowed = false;
+        }
+    }
+
+    private void OnAngleSetupStickToggle()
+    {
+        _angleSetupStick.SetActive(!_angleSetupStick.activeSelf);
     }
 }

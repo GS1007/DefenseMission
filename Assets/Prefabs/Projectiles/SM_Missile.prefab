@@ -214,6 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8db798fcf9498f4684928815dec0809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MMissile
+  _flightTrail: {fileID: 8386538909544897950}
   _rb: {fileID: 5504095074594868413}
   _meshRenderer: {fileID: 7730572820492879274}
   _seeker: {fileID: 4909095420357039862}
@@ -277,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2591313189456021927, guid: 4c586db991af75741a56bc9957e4a061, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5698354915147404883, guid: 4c586db991af75741a56bc9957e4a061, type: 3}
       propertyPath: m_SortingLayerID
@@ -407,5 +408,10 @@ PrefabInstance:
 --- !u!4 &6054681238588291270 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 257344718707567871, guid: 4c586db991af75741a56bc9957e4a061, type: 3}
+  m_PrefabInstance: {fileID: 6310890158353142841}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8386538909544897950 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2591313189456021927, guid: 4c586db991af75741a56bc9957e4a061, type: 3}
   m_PrefabInstance: {fileID: 6310890158353142841}
   m_PrefabAsset: {fileID: 0}

@@ -24,7 +24,6 @@ public class Strela2MBatteryTimer : MonoBehaviour
     private void Start()
     {
         _timeElapsed = 0f;
-        _timerText.text = $"0{_timeElapsed}";
     }
 
     private void Update()
@@ -56,7 +55,7 @@ public class Strela2MBatteryTimer : MonoBehaviour
     private void UpdateTimer()
     {
         ++_timeElapsed;
-        _timerText.text = _timeElapsed < 10 ? $"0{_timeElapsed}" : _timeElapsed.ToString();
+        _timerText.text = _timeElapsed < 10 ? $"ელემენტის დრო: 0{_timeElapsed}" : $"ელემენტის დრო: {_timeElapsed}";
     }
 
     private void StopTimer()

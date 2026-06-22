@@ -16,7 +16,7 @@ public class Strela2MHUD : MonoBehaviour
     private Strela2MSeeker _seeker;
 
     public string CurrentTargetName { get; private set; }
-    public string MissileLaunchMode { get; private set; }
+    public LaunchMode MissileLaunchMode { get; private set; }
     public float AngleSettings { get { return Mathf.DeltaAngle(0, _strela2M.eulerAngles.z); } }
 
     private void OnEnable()
@@ -80,8 +80,10 @@ public class Strela2MHUD : MonoBehaviour
 
     private void DisplayLaunchMode(LaunchMode launchMode)
     {
-        MissileLaunchMode = launchMode == LaunchMode.Automatic ? "ავტომატური" : "ხელის";
-        _launchModeText.text = $"სროლის რეჟიმი: {MissileLaunchMode}";
+        MissileLaunchMode = launchMode;
+        _launchModeText.text = MissileLaunchMode == LaunchMode.Automatic ? "სროლის რეჟიმი: ავტომატური" : "სროლის რეჟიმი: ხელის";
+
+        Debug.Log(MissileLaunchMode);
     }
 
     private void EnableNotificationtext()

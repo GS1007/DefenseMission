@@ -18,7 +18,6 @@ public class AircraftCollisionManager : MonoBehaviour, IDamageable, IAircraftTar
     [Header("Events")]
 
     [SerializeField] private UnityEvent OnCriticalDamageReceive;
-    [SerializeField] private UnityEvent OnPartialDamageReceive;
 
 
     public void ReceiveDamage()
