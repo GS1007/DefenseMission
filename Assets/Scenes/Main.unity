@@ -14772,6 +14772,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SelectedAircraftDisplay
   _aircraftImage: {fileID: 526257021}
   _aircraftNameText: {fileID: 522734417}
+  _speedText: {fileID: 0}
+  _heightText: {fileID: 0}
 --- !u!1 &860837605
 GameObject:
   m_ObjectHideFlags: 0
@@ -29845,9 +29847,6 @@ GameObject:
   - component: {fileID: 1841271523}
   - component: {fileID: 1841271522}
   - component: {fileID: 1841271521}
-  - component: {fileID: 1841271520}
-  - component: {fileID: 1841271519}
-  - component: {fileID: 1841271518}
   m_Layer: 5
   m_Name: SimulationSetupCanvas
   m_TagString: Untagged
@@ -29855,64 +29854,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1841271518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1841271517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4182f9af667ebed4494212ef7acc57ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Strela2MBatteryTimer
-  _timerText: {fileID: 0}
-  _battery: {fileID: 1715799049}
---- !u!114 &1841271519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1841271517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 469b73e36c7758743a0641c93ad1f817, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FireReportUI
-  _successFulFireReportPanel: {fileID: 0}
-  _failedFireReportPanel: {fileID: 0}
-  _aircraftImage: {fileID: 0}
-  _hitPointRect: {fileID: 0}
-  _targetNameText: {fileID: 0}
-  _angleSettingsText: {fileID: 0}
-  _launchModeText: {fileID: 0}
-  _differenceBetweenLockAndFireText: {fileID: 0}
-  _reportPanel: {fileID: 0}
-  _mi24Sprite: {fileID: 21300000, guid: 3b6f9765d4ad96049a97cdb3a96cf47c, type: 3}
-  _su25Sprite: {fileID: 21300000, guid: 46da57ce3b5265b41a4df932da147c0c, type: 3}
-  _instructorPanel: {fileID: 1841271520}
-  _strela2MLauncher: {fileID: 1715799050}
---- !u!114 &1841271520
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1841271517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 842c3f31d9e8df8439320432d402e994, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Strela2MHUD
-  _strela2M: {fileID: 1715799044}
-  _targetNameText: {fileID: 0}
-  _angleSetupText: {fileID: 0}
-  _fireTimeAngleSetupText: {fileID: 0}
-  _launchModeText: {fileID: 0}
-  _notificationText: {fileID: 0}
-  _notificationDissapearTime: 3
 --- !u!114 &1841271521
 MonoBehaviour:
   m_ObjectHideFlags: 0
