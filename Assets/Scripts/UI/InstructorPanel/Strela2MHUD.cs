@@ -101,6 +101,6 @@ public class Strela2MHUD : MonoBehaviour
     private void DisplayFireTimeAngleSetup()
     {
         float angle = Mathf.DeltaAngle(0, _strela2M.eulerAngles.z);
-        _fireTimeAngleSetupText.text = $"გადახრა გასროლისას: {Mathf.Abs(angle):F1}";
+        _fireTimeAngleSetupText.text = $"გადახრა გასროლისას: {Mathf.Abs(angle / 3):F1}";
     }
 }

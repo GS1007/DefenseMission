@@ -26,12 +26,12 @@ public class AircraftListEntryUI : MonoBehaviour
         _heightText.text = $"სიმაღლე: {Mathf.RoundToInt(height)}მ";
     }
 
-    public void OnEdit_ButtonClick()
+    public void OnEditButtonClick()
     {
         EditButtonClicked?.Invoke(this);
     }
 
-    public void OnRemove_ButtonClick()
+    public void OnRemoveButtonClick()
     {
         RemoveButtonClicked?.Invoke(this);
     }

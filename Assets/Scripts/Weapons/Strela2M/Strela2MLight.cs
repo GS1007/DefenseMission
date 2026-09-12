@@ -38,7 +38,7 @@ public class Strela2MLight : MonoBehaviour
         {
             _light.enabled = true;
         }
-        else if (_seeker.CurrentTargetType == TargetType.Sun || (_seeker.SignalStrength > 0f && _seeker.SignalStrength < 0.6f))
+        else if (_seeker.CurrentTargetType == TargetType.Sun || _seeker.CurrentTargetType == TargetType.Cloud || (_seeker.SignalStrength > 0f && _seeker.SignalStrength < 0.6f))
         {
             _light.enabled = (Time.time % 0.4f) > 0.2f;
         }

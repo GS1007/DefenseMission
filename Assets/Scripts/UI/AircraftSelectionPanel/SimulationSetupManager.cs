@@ -8,7 +8,9 @@ public class SimulationSetupManager : MonoBehaviour
     [SerializeField] private SimulationSetupPanel _simulationSetupPanel;
     [SerializeField] private SelectedAircraftEditPanel _editPanel;
     [SerializeField] private RectTransform _aircraftListContentContainer;
-    
+
+    [SerializeField] private TacticalOperationsMapPathManager _tacticalMapManager;
+
     [Header("Prefabs & Systems")]
     [SerializeField] private AircraftListEntryUI _aircraftListEntryPrefab;
     [SerializeField] private SplineContainer _splineContainerPrefab;
@@ -19,30 +21,30 @@ public class SimulationSetupManager : MonoBehaviour
 
     private List<ActiveAircraftState> _activeStates = new List<ActiveAircraftState>();
     private Dictionary<AircraftListEntryUI, ActiveAircraftState> _uiToDataMap = new Dictionary<AircraftListEntryUI, ActiveAircraftState>();
-    
+
     private AircraftListEntryUI _activeEditingDisplay;
 
     private void OnEnable()
     {
         _simulationSetupPanel.AddAircraftRequested += OnAddAircraft;
         _simulationSetupPanel.LaunchRequested += OnLaunch;
-        
+
         _editPanel.DataChanged += OnCurrentAircraftDataChanged;
         _editPanel.BackButtonClicked += CloseEditPanel;
+    }
+
+    private void Start()
+    {
+        CloseEditPanel();
     }
 
     private void OnDisable()
     {
         _simulationSetupPanel.AddAircraftRequested -= OnAddAircraft;
         _simulationSetupPanel.LaunchRequested -= OnLaunch;
-        
+
         _editPanel.DataChanged -= OnCurrentAircraftDataChanged;
         _editPanel.BackButtonClicked -= CloseEditPanel;
-    }
-
-    private void Start()
-    {
-        CloseEditPanel();
     }
 
     private void OnAddAircraft(int dropDownIndex)
@@ -52,14 +54,14 @@ public class SimulationSetupManager : MonoBehaviour
             AircraftConfig config = _aircraftConfigs[dropDownIndex];
 
             ActiveAircraftState activeState = new ActiveAircraftState(config);
-            
+
             SplineContainer newPath = Instantiate(_splineContainerPrefab);
             newPath.transform.position = new Vector3(newPath.transform.position.x, activeState.Height, newPath.transform.position.z);
             activeState.AircraftPath = newPath;
 
             AircraftListEntryUI listEntryUI = Instantiate(_aircraftListEntryPrefab, _aircraftListContentContainer, false);
             listEntryUI.Init(config);
-            
+
             listEntryUI.EditButtonClicked += OnOpenEditWindow;
             listEntryUI.RemoveButtonClicked += OnRemoveAircraft;
 
@@ -75,6 +77,11 @@ public class SimulationSetupManager : MonoBehaviour
             _activeEditingDisplay = listEntryUI;
             _editPanel.gameObject.SetActive(true);
             _editPanel.BindTarget(activeState);
+
+            if (_tacticalMapManager != null)
+            {
+                _tacticalMapManager.BindAircraft(activeState);
+            }
         }
     }
 
@@ -90,6 +97,11 @@ public class SimulationSetupManager : MonoBehaviour
     {
         _activeEditingDisplay = null;
         _editPanel.gameObject.SetActive(false);
+
+        if (_tacticalMapManager != null)
+        {
+            _tacticalMapManager.BindAircraft(null);
+        }
     }
 
     private void OnRemoveAircraft(AircraftListEntryUI listEntryUI)
@@ -106,7 +118,7 @@ public class SimulationSetupManager : MonoBehaviour
 
             _activeStates.Remove(activeState);
             _uiToDataMap.Remove(listEntryUI);
-            
+
             Destroy(activeState.AircraftPath.gameObject);
             Destroy(listEntryUI.gameObject);
         }

@@ -10,7 +10,7 @@ public class AviationManager : MonoBehaviour
     [SerializeField] private int _aircraftLaunchingMinDelay = 0;
     [SerializeField] private int _aircraftLaunchingMaxDelay = 0;
 
-    private List<AviationSplinePathMovement> _splinePathMovements;
+    private List<AviationSplinePathMovement> _splinePathMovements = new List<AviationSplinePathMovement>();
 
     private int _currentAirCraftIndex = 0;
 

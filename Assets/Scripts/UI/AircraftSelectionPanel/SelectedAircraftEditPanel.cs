@@ -9,13 +9,12 @@ public class SelectedAircraftEditPanel : MonoBehaviour
     public event Action DataChanged;
 
     [Header("UI Controls")]
-    [SerializeField] private Slider _speedSlider;
     [SerializeField] private Slider _heightSlider;
+    [SerializeField] private Slider _speedSlider;
 
     [Header("UI Text Overlays")]
-    [SerializeField] private TextMeshProUGUI _titleText;
-    [SerializeField] private TextMeshProUGUI _speedValueText;
     [SerializeField] private TextMeshProUGUI _heightValueText;
+    [SerializeField] private TextMeshProUGUI _speedValueText;
     [SerializeField] private TextMeshProUGUI _totalAircraftText;
 
     private ActiveAircraftState _currentTarget;
@@ -24,8 +23,6 @@ public class SelectedAircraftEditPanel : MonoBehaviour
     {
         _currentTarget = target;
         AircraftConfig config = target.AircraftConfig;
-
-        if (_titleText != null) _titleText.text = $"{config.AircraftName} - რედაქტირება";
 
         _speedSlider.minValue = config.MinFlightSpeed;
         _speedSlider.maxValue = config.MaxFlightSpeed;

@@ -60,7 +60,7 @@ public class FireReportUI : MonoBehaviour
         DisplayFireResultData();
     }
 
-    private void DisplayFireResultData()
+    public void DisplayFireResultData()
     {
         if (_fireResultDatas.Count == 0)
         {
@@ -105,7 +105,7 @@ public class FireReportUI : MonoBehaviour
                 {
                     TargetObjectName = aircraftType.ToString(),
                     TargetSprite = aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
-                    AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings),
+                    AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings / 3),
                     LaunchMode = _instructorPanel.MissileLaunchMode,
                     DifferenceBetweeenLockAndFire = Time.time - _strela2MLauncher.CurrentSeeker.TargetLockTime,
                     HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(-417f, -45f, 0f)

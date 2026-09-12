@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class ActiveAircraftState : MonoBehaviour
+public class ActiveAircraftState 
 {
     public SplineContainer AircraftPath { get; set; }
     public AircraftConfig AircraftConfig { get; }
