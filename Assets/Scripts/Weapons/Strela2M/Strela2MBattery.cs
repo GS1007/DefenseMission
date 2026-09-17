@@ -8,6 +8,8 @@ public class Strela2MBattery : MonoBehaviour
     public static event Action PoweredOn;
     public static event Action BatteryDied;
 
+    [SerializeField] private MonoBehaviour _mainpadsInputBehaviour;
+
     [SerializeField] private Strela2MLauncher _launcher;
 
     [SerializeField] private float _maxBatteryLife = 0f;
@@ -17,9 +19,19 @@ public class Strela2MBattery : MonoBehaviour
 
     public float MaxBatteryLife { get { return _maxBatteryLife; } }
 
+    private IManpadsInput _manpadsInput;
+
+    private void Awake()
+    {
+        _manpadsInput = _mainpadsInputBehaviour as IManpadsInput;
+    }
+
     private void OnEnable()
     {
-        Strela2MInput.PowerToggled += PowerUp;
+        if(_manpadsInput != null)
+        {
+            _manpadsInput.PowerToggled += PowerUp;
+        }
     }
 
     private void Update()
@@ -37,7 +49,10 @@ public class Strela2MBattery : MonoBehaviour
 
     private void OnDisable()
     {
-        Strela2MInput.PowerToggled -= PowerUp;
+        if(_manpadsInput != null)
+        {
+            _manpadsInput.PowerToggled -= PowerUp;
+        }
     }
 
     private void PowerUp()

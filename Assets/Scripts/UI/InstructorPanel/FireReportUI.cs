@@ -15,8 +15,6 @@ public class FireReportUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _launchModeText;
     [SerializeField] private TextMeshProUGUI _differenceBetweenLockAndFireText;
 
-    [Header("Temporary")]
-    [SerializeField] private GameObject _reportPanel;
 
     [Header("Aircraft Sprites")]
     [SerializeField] private Sprite _mi24Sprite;
@@ -25,27 +23,40 @@ public class FireReportUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private Strela2MHUD _instructorPanel;
     [SerializeField] private Strela2MLauncher _strela2MLauncher;
+    [SerializeField] private MonoBehaviour _mainpadsInputBehaviour;
 
     private List<FireResultData> _fireResultDatas = new List<FireResultData>();
 
     private int _resultDataIndex = 0;
 
     private FireResultData _currentFireResultData;
+    private IManpadsInput _manpadsInput;
+
+    private void Awake()
+    {
+        _manpadsInput = _mainpadsInputBehaviour as IManpadsInput;
+    }
 
     private void OnEnable()
     {
         AviationManager.SimulationEnded += DisplayFireResultData;
         AircraftCollisionManager.DamagedReceived += AddFireResultData;
-        Strela2MInput.TriggerPullingEnded += DetectCurrentTarget;
-        Strela2MInput.FireReportOpened += OnFireReportOpen_ButtonClick;
+
+        if(_manpadsInput != null)
+        {
+            _manpadsInput.TriggerPullingEnded += DetectCurrentTarget;
+        }
     }
 
     private void OnDisable()
     {
         AviationManager.SimulationEnded -= DisplayFireResultData;
         AircraftCollisionManager.DamagedReceived -= AddFireResultData;
-        Strela2MInput.TriggerPullingEnded -= DetectCurrentTarget;
-        Strela2MInput.FireReportOpened -= OnFireReportOpen_ButtonClick;
+
+        if(_manpadsInput != null)
+        {
+            _manpadsInput.TriggerPullingEnded -= DetectCurrentTarget;
+        }
     }
 
     public void OnNextButtonClick()
@@ -110,23 +121,7 @@ public class FireReportUI : MonoBehaviour
                     DifferenceBetweeenLockAndFire = Time.time - _strela2MLauncher.CurrentSeeker.TargetLockTime,
                     HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(-417f, -45f, 0f)
                 };
-
-                Debug.Log(_currentFireResultData.TargetObjectName);
-                Debug.Log(_currentFireResultData.LaunchMode);
             }
-        }
-    }
-
-    private void OnFireReportOpen_ButtonClick()
-    {
-        if(_reportPanel.activeSelf == false)
-        {
-            _reportPanel.SetActive(true);
-            DisplayFireResultData();
-        }
-        else
-        {
-            _reportPanel.SetActive(false);
         }
     }
 }

@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
   _lockRange: 4200
   _seekerFOV: 1.5
-  _sunAngle: 30
+  _sunAngle: 15
   _aircraftLayer:
     serializedVersion: 2
     m_Bits: 64
