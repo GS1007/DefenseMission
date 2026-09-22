@@ -13,7 +13,7 @@ public class Strela2MHUD : MonoBehaviour
 
     [SerializeField] private float _notificationDissapearTime = 3f;
 
-    private Strela2MSeeker _seeker;
+    private ISeeker _seeker;
 
     public string CurrentTargetName { get; private set; }
     public LaunchMode MissileLaunchMode { get; private set; }
@@ -21,10 +21,10 @@ public class Strela2MHUD : MonoBehaviour
 
     private void OnEnable()
     {
-        Strela2MLauncher.IllegallyFired += EnableNotificationtext;
-        Strela2MLauncher.MissileLoaded += OnMissileLoad;
-        Strela2MLauncher.LaunchModeSet += DisplayLaunchMode;
-        Strela2MLauncher.Fired += DisplayFireTimeAngleSetup;
+        ManpadsLauncher.IllegallyFired += EnableNotificationtext;
+        ManpadsLauncher.MissileLoaded += OnMissileLoad;
+        ManpadsLauncher.LaunchModeSet += DisplayLaunchMode;
+        ManpadsLauncher.Fired += DisplayFireTimeAngleSetup;
     }
 
     private void Update()
@@ -54,10 +54,10 @@ public class Strela2MHUD : MonoBehaviour
 
     private void OnDisable()
     {
-        Strela2MLauncher.IllegallyFired -= EnableNotificationtext;
-        Strela2MLauncher.MissileLoaded -= OnMissileLoad;
-        Strela2MLauncher.LaunchModeSet -= DisplayLaunchMode;
-        Strela2MLauncher.Fired -= DisplayFireTimeAngleSetup;
+        ManpadsLauncher.IllegallyFired -= EnableNotificationtext;
+        ManpadsLauncher.MissileLoaded -= OnMissileLoad;
+        ManpadsLauncher.LaunchModeSet -= DisplayLaunchMode;
+        ManpadsLauncher.Fired -= DisplayFireTimeAngleSetup;
     }
 
     private void OnMissileLoad(Strela2MMissile missile)

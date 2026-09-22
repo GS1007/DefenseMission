@@ -7,7 +7,7 @@ public class Strela2MMissile : MonoBehaviour
     [SerializeField] private GameObject _flightTrail;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private MeshRenderer _meshRenderer;
-    [SerializeField] private Strela2MSeeker _seeker;
+    [SerializeField] private MonoBehaviour _seekerBehaviour;
 
     [Header("Flight Dynamics")]
     [SerializeField] private float _ejectionForce = 15f;
@@ -27,14 +27,18 @@ public class Strela2MMissile : MonoBehaviour
 
     private Transform _target;
     private TargetType _targetType;
+    private ISeeker _seeker;
 
-    public Strela2MSeeker Seeker => _seeker;
+    public ISeeker Seeker { get { return _seeker; } }
+
+    private void Awake()
+    {
+        _seeker = _seekerBehaviour as ISeeker;
+    }
 
     private void FixedUpdate()
     {
         if (!_isAirborne) return;
-
-        _seeker.DoUpdate();
 
         if (_target != _seeker.CurrentTarget && _seeker.CurrentTarget != null)
             _lastLosVector = (_seeker.CurrentTarget.position - transform.position).normalized;

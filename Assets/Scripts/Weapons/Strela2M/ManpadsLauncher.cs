@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Strela2MLauncher : MonoBehaviour
+public class ManpadsLauncher : MonoBehaviour
 {
     public static event Action<Strela2MMissile> MissileLoaded;
     public static event Action Fired;
@@ -14,8 +14,6 @@ public class Strela2MLauncher : MonoBehaviour
     [SerializeField] private Transform _strela2M;
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
-
-    [SerializeField] private LayerMask _aircraftLayer;
 
     [SerializeField] private Strela2MMissile _missilePrefab;
     [SerializeField] private Strela2MInput _input;
@@ -35,7 +33,7 @@ public class Strela2MLauncher : MonoBehaviour
     private WaitForSeconds _automaticLaunchDelay;
     private WaitForSeconds _trackingLockResetDelay;
 
-    private Strela2MSeeker _seeker;
+    private ISeeker _seeker;
 
     private IManpadsInput _manpadsInput;
 
@@ -43,7 +41,7 @@ public class Strela2MLauncher : MonoBehaviour
 
     public LauncherState State { get; set; } = LauncherState.Off;
     public Strela2MMissile LoadedMissile { get; private set; }
-    public Strela2MSeeker CurrentSeeker { get { return _seeker; } }
+    public ISeeker Seeker { get { return _seeker; } }
 
     private void Awake()
     {
@@ -81,7 +79,7 @@ public class Strela2MLauncher : MonoBehaviour
 
         if(_trackingIsAllowed == true)
         {
-            _seeker.DoUpdate();
+            //_seeker.DoUpdate();
         }
 
         if (_triggerIsHeld == true)

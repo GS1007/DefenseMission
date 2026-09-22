@@ -3,22 +3,22 @@ using UnityEngine;
 public class Strela2MLight : MonoBehaviour
 {
     [SerializeField] private MeshRenderer _light;
-    [SerializeField] private Strela2MLauncher _launcher;
+    [SerializeField] private ManpadsLauncher _launcher;
 
-    private Strela2MSeeker _seeker;
+    private ISeeker _seeker;
 
     private void OnEnable()
     {
-        Strela2MLauncher.MissileLoaded += OnMissileLoad;
+        ManpadsLauncher.MissileLoaded += OnMissileLoad;
         Strela2MBattery.BatteryDied += DisableLight;
-        Strela2MLauncher.Fired += OnFire;
+        ManpadsLauncher.Fired += OnFire;
     }
 
     private void OnDisable()
     {
-        Strela2MLauncher.MissileLoaded -= OnMissileLoad;
+        ManpadsLauncher.MissileLoaded -= OnMissileLoad;
         Strela2MBattery.BatteryDied -= DisableLight;
-        Strela2MLauncher.Fired -= OnFire;
+        ManpadsLauncher.Fired -= OnFire;
     }
 
     private void Update()

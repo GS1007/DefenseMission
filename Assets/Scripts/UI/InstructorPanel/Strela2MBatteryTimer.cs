@@ -18,7 +18,7 @@ public class Strela2MBatteryTimer : MonoBehaviour
     {
         Strela2MBattery.PowerUpStarted += LaunchTimer;
         Strela2MBattery.BatteryDied += StopTimer;
-        Strela2MLauncher.Fired += StopTimer;
+        ManpadsLauncher.Fired += StopTimer;
     }
 
     private void Start()
@@ -42,7 +42,7 @@ public class Strela2MBatteryTimer : MonoBehaviour
     {
         Strela2MBattery.PowerUpStarted -= LaunchTimer;
         Strela2MBattery.BatteryDied -= StopTimer;
-        Strela2MLauncher.Fired -= StopTimer;
+        ManpadsLauncher.Fired -= StopTimer;
     }
 
     private void LaunchTimer()

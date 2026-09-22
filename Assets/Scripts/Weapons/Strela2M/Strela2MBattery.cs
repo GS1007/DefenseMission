@@ -10,7 +10,7 @@ public class Strela2MBattery : MonoBehaviour
 
     [SerializeField] private MonoBehaviour _mainpadsInputBehaviour;
 
-    [SerializeField] private Strela2MLauncher _launcher;
+    [SerializeField] private ManpadsLauncher _launcher;
 
     [SerializeField] private float _maxBatteryLife = 0f;
     [SerializeField] private float _gyroSpinupTime = 0f;

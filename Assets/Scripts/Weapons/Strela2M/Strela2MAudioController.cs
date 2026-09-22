@@ -3,7 +3,7 @@ using UnityEngine;
 public class Strela2MAudioController : MonoBehaviour
 {
     [Header("Component References")]
-    [SerializeField] private Strela2MLauncher _launcher;
+    [SerializeField] private ManpadsLauncher _launcher;
 
     [Header("Audio Sources")]
     [SerializeField] private AudioSource _seekerSource;
@@ -20,21 +20,21 @@ public class Strela2MAudioController : MonoBehaviour
     [SerializeField] private float _maxVolume = 1.0f;
 
     private AudioClip _currentClip;
-    private Strela2MSeeker _seeker;
+    private ISeeker _seeker;
 
     private bool _fireSoundPlaying;
 
     private void OnEnable()
     {
-        Strela2MLauncher.MissileLoaded += OnMissileLoad;
-        Strela2MLauncher.Fired += OnFire;
+        ManpadsLauncher.MissileLoaded += OnMissileLoad;
+        ManpadsLauncher.Fired += OnFire;
         Strela2MBattery.BatteryDied += ResetAudio;
     }
 
     private void OnDisable()
     {
-        Strela2MLauncher.Fired -= OnFire;
-        Strela2MLauncher.MissileLoaded -= OnMissileLoad;
+        ManpadsLauncher.Fired -= OnFire;
+        ManpadsLauncher.MissileLoaded -= OnMissileLoad;
         Strela2MBattery.BatteryDied -= ResetAudio;
     }
 

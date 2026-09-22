@@ -22,7 +22,7 @@ public class FireReportUI : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Strela2MHUD _instructorPanel;
-    [SerializeField] private Strela2MLauncher _strela2MLauncher;
+    [SerializeField] private ManpadsLauncher _strela2MLauncher;
     [SerializeField] private MonoBehaviour _mainpadsInputBehaviour;
 
     private List<FireResultData> _fireResultDatas = new List<FireResultData>();
@@ -102,7 +102,7 @@ public class FireReportUI : MonoBehaviour
             return;
         }
 
-        Transform currentTarget = _strela2MLauncher.CurrentSeeker.CurrentTarget;
+        Transform currentTarget = _strela2MLauncher.Seeker.CurrentTarget;
 
         if (currentTarget != null)
         {
@@ -118,7 +118,7 @@ public class FireReportUI : MonoBehaviour
                     TargetSprite = aircraftType == AircraftType.MI24 ? _mi24Sprite : _su25Sprite,
                     AngleSettings = Mathf.Abs(_instructorPanel.AngleSettings / 3),
                     LaunchMode = _instructorPanel.MissileLaunchMode,
-                    DifferenceBetweeenLockAndFire = Time.time - _strela2MLauncher.CurrentSeeker.TargetLockTime,
+                    DifferenceBetweeenLockAndFire = Time.time - _strela2MLauncher.Seeker.TargetLockTime,
                     HitPoint = aircraftType == AircraftType.MI24 ? new Vector3(220f, 80f, 0f) : new Vector3(-417f, -45f, 0f)
                 };
             }

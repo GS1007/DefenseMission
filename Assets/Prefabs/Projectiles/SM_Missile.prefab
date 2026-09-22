@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6107842314363745107}
-  - component: {fileID: 4909095420357039862}
+  - component: {fileID: 3986833051276527453}
   m_Layer: 0
   m_Name: IRSeeker
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3362406155338247969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4909095420357039862
+--- !u!114 &3986833051276527453
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,24 +41,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 234598667538795026}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7290b69b171b23e46a696336e1b90c6f, type: 3}
+  m_Script: {fileID: 11500000, guid: 53acb0a5842f9c14eb4b2c4920d77f20, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Strela2MSeeker
-  _lockRange: 4200
-  _seekerFOV: 1.5
-  _sunAngle: 15
-  _aircraftLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  _occlusionLayers:
-    serializedVersion: 2
-    m_Bits: 128
-  _lockDuration: 3
-  _maxSlewRate: 60
-  _seekerTrackRate: 11
-  _gimbalLimit: 25
-  _signalLockThreshold: 0.2
-  _sunThermalSignature: 5
+  m_EditorClassIdentifier: Assembly-CSharp::InfraredSeeker
+  _config: {fileID: 11400000, guid: 54badc23c46cd914dae2a4217040f648, type: 2}
 --- !u!1 &6313387835446921533
 GameObject:
   m_ObjectHideFlags: 0
@@ -217,7 +203,7 @@ MonoBehaviour:
   _flightTrail: {fileID: 8386538909544897950}
   _rb: {fileID: 5504095074594868413}
   _meshRenderer: {fileID: 7730572820492879274}
-  _seeker: {fileID: 4909095420357039862}
+  _seekerBehaviour: {fileID: 3986833051276527453}
   _ejectionForce: 20
   _sustainerDelay: 0.3
   _sustainerThrust: 200
