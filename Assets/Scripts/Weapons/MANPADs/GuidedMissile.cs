@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Strela2MMissile : MonoBehaviour
+public class GuidedMissile : MonoBehaviour, IMissile
 {
     [Header("Components")]
     [SerializeField] private GameObject _flightTrail;

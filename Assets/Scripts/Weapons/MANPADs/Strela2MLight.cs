@@ -48,7 +48,7 @@ public class Strela2MLight : MonoBehaviour
         }
     }
 
-    private void OnMissileLoad(Strela2MMissile missile)
+    private void OnMissileLoad(GuidedMissile missile)
     {
         _seeker = missile.Seeker;
     }

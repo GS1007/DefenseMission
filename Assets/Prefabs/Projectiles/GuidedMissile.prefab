@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 5504095074594868413}
   - component: {fileID: 5440741239595406257}
   m_Layer: 0
-  m_Name: SM_Missile
+  m_Name: GuidedMissile
   m_TagString: Missile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

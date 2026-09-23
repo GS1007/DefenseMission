@@ -60,7 +60,7 @@ public class Strela2MHUD : MonoBehaviour
         ManpadsLauncher.Fired -= DisplayFireTimeAngleSetup;
     }
 
-    private void OnMissileLoad(Strela2MMissile missile)
+    private void OnMissileLoad(GuidedMissile missile)
     {
         _seeker = missile.Seeker;
     }

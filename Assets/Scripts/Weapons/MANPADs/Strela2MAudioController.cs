@@ -82,7 +82,7 @@ public class Strela2MAudioController : MonoBehaviour
         }
     }
 
-    private void OnMissileLoad(Strela2MMissile missile)
+    private void OnMissileLoad(GuidedMissile missile)
     {
         _seeker = missile.Seeker;
         _seekerSource.volume = _baseVolume;

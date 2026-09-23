@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ManpadsLauncher : MonoBehaviour
 {
-    public static event Action<Strela2MMissile> MissileLoaded;
+    public static event Action<GuidedMissile> MissileLoaded;
     public static event Action Fired;
     public static event Action IllegallyFired;
     public static event Action<LaunchMode> LaunchModeSet;
@@ -15,7 +15,7 @@ public class ManpadsLauncher : MonoBehaviour
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private Transform _angleSetupPoint;
 
-    [SerializeField] private Strela2MMissile _missilePrefab;
+    [SerializeField] private GuidedMissile _missilePrefab;
     [SerializeField] private Strela2MInput _input;
 
     [SerializeField] private float _lauchModeSetupTime = 0f;
@@ -25,7 +25,6 @@ public class ManpadsLauncher : MonoBehaviour
     [SerializeField] private float _trackingLockResetTime = 1f;
 
     private bool _triggerIsHeld = false;
-    private bool _trackingIsAllowed = true;
 
     private LaunchMode _launchMode = LaunchMode.Automatic;
 
@@ -40,7 +39,7 @@ public class ManpadsLauncher : MonoBehaviour
     private IEnumerator _launchModeSetRoutine;
 
     public LauncherState State { get; set; } = LauncherState.Off;
-    public Strela2MMissile LoadedMissile { get; private set; }
+    public GuidedMissile LoadedMissile { get; private set; }
     public ISeeker Seeker { get { return _seeker; } }
 
     private void Awake()
@@ -75,11 +74,6 @@ public class ManpadsLauncher : MonoBehaviour
         if (State != LauncherState.Ready)
         {
             return;
-        }
-
-        if(_trackingIsAllowed == true)
-        {
-            //_seeker.DoUpdate();
         }
 
         if (_triggerIsHeld == true)
@@ -209,10 +203,7 @@ public class ManpadsLauncher : MonoBehaviour
     {
         yield return _trackingLockResetDelay;
 
-        if (_trackingIsAllowed == false)
-        {
-            _trackingIsAllowed = true;
-        }
+        _seeker.SetTrackingActive(true);
     }
 
     private bool IsWithinTheAngle()
@@ -240,19 +231,16 @@ public class ManpadsLauncher : MonoBehaviour
         _triggerIsHeld = false;
     }
 
-    private void OnTrackingReset()
+    private void OnTrackingReset()  
     {
         if(_seeker == null)
         {
             return;
         }
 
-        if(_trackingIsAllowed == true)
-        {
-            StartCoroutine(ResetTrackingLock());
+        _seeker.SetTrackingActive(false);
+        _seeker.ResetSeeker();
 
-            _seeker.ResetSeeker();
-            _trackingIsAllowed = false;
-        }
+        StartCoroutine(ResetTrackingLock());
     }
 }
