@@ -29,12 +29,14 @@ public class SimulationSetupManager : MonoBehaviour
         _simulationSetupPanel.AddAircraftRequested += OnAddAircraft;
         _simulationSetupPanel.LaunchRequested += OnLaunch;
 
-        _editPanel.DataChanged += OnCurrentAircraftDataChanged;
+        _editPanel.DataChanged += OnCurrentAircraftDataChange;
         _editPanel.BackButtonClicked += CloseEditPanel;
+        _editPanel.AircraftOptionChanged += AircraftOptionChange;
     }
 
     private void Start()
     {
+        _simulationSetupPanel.InitData(_aircraftConfigs);
         CloseEditPanel();
     }
 
@@ -43,8 +45,9 @@ public class SimulationSetupManager : MonoBehaviour
         _simulationSetupPanel.AddAircraftRequested -= OnAddAircraft;
         _simulationSetupPanel.LaunchRequested -= OnLaunch;
 
-        _editPanel.DataChanged -= OnCurrentAircraftDataChanged;
+        _editPanel.DataChanged -= OnCurrentAircraftDataChange;
         _editPanel.BackButtonClicked -= CloseEditPanel;
+        _editPanel.AircraftOptionChanged -= AircraftOptionChange;
     }
 
     private void OnAddAircraft(int dropDownIndex)
@@ -67,6 +70,8 @@ public class SimulationSetupManager : MonoBehaviour
 
             _activeStates.Add(activeState);
             _uiToDataMap[listEntryUI] = activeState;
+
+            _simulationSetupPanel.SetlaunchButtonState(_activeStates.Count);
         }
     }
 
@@ -82,10 +87,14 @@ public class SimulationSetupManager : MonoBehaviour
             {
                 _tacticalMapManager.BindAircraft(activeState);
             }
+
+            _editPanel.UpdateTotalAircraftCount(_activeStates.Count);
+            _editPanel.SetupAircraftOptions(_activeStates);
+            _editPanel.DisplaySelectedAircraft(_activeStates.IndexOf(activeState));
         }
     }
 
-    private void OnCurrentAircraftDataChanged()
+    private void OnCurrentAircraftDataChange()
     {
         if (_activeEditingDisplay != null && _uiToDataMap.TryGetValue(_activeEditingDisplay, out ActiveAircraftState activeState))
         {
@@ -121,6 +130,20 @@ public class SimulationSetupManager : MonoBehaviour
 
             Destroy(activeState.AircraftPath.gameObject);
             Destroy(listEntryUI.gameObject);
+
+            _simulationSetupPanel.SetlaunchButtonState(_activeStates.Count);
+        }
+    }
+
+    private void AircraftOptionChange(int value)
+    {
+        ActiveAircraftState activeState = _activeStates[value];
+
+        _editPanel.BindTarget(activeState);
+
+        if (_tacticalMapManager != null)
+        {
+            _tacticalMapManager.BindAircraft(activeState);
         }
     }
 
